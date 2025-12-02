@@ -377,3 +377,4 @@ class AddNewComplaintPage extends StatelessWidget {
 extension on bool {
   bool get value => true;
 }
+

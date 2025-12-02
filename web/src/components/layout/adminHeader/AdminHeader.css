@@ -1,0 +1,35 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px;
+}
+/* flex items-center justify-between w-full */
+
+.header-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+/* flex gap-12 */
+.header-nav {
+  display: flex;
+  gap: 12;
+}
+/* flex justify-around items-center gap-x-2 */
+
+.right-side {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  row-gap: 2;
+}
+
+/* w-10 h-10 rounded-full object-cover */
+.img-header {
+  width: 10%;
+  height: 10%;
+  border-radius: 25px;
+  object-fit: cover;
+}
