@@ -85,7 +85,9 @@ class Employee extends Authenticatable  implements JWTSubject
 
 
 
-
+    public function getAuthPassword(){
+        return $this->password_hash;
+    }
     
     public function getJWTIdentifier()
     {

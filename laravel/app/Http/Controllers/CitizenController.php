@@ -10,7 +10,7 @@ class CitizenController extends Controller
     private ICitizenRepo $citizenRepo;
 
     public function __construct(ICitizenRepo $citizenRepo1){
-        $citizenRepo = $citizenRepo1;
+        $this->citizenRepo = $citizenRepo1;
     }
 
     public function index(){
@@ -46,7 +46,7 @@ class CitizenController extends Controller
             'password' => 'required|string|min:6|confirmed',
         ]);
 
-        $citizen = $citizenRepo->insert([
+        $citizen = $this->citizenRepo->insert([
             'full_name' => $request->full_name,
             'email' => $request->email,
             'password_hash' => Hash::make($request->password),

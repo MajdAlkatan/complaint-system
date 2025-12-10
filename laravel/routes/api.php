@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AttachmentController;
 use App\Http\Controllers\CitizenController;
 use App\Http\Controllers\ComplaintController;
@@ -16,14 +17,21 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::post('register', [AuthController::class, 'register'])
+Route::post('admins/register', [AdminController::class, 'register'])
+->middleware('LogUserActivity');
+
+Route::post('admins/login', [AdminController::class, 'login'])
+->middleware('LogUserActivity');
+
+
+Route::post('citizens/register', [CitizenController::class, 'register'])
 ->middleware('LogUserActivity');
 
 Route::post('activities', [ActivityController::class, 'index'])
 ->middleware('LogUserActivity');
 
 
-Route::post('login', [AuthController::class, 'login'])
+Route::post('citizens/login', [CitizenController::class, 'login'])
     ->middleware(['throttle:login', 'LogUserActivity']);
 
 Route::post('logout', [AuthController::class, 'logout']);

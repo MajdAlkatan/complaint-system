@@ -9,7 +9,7 @@ class GovernmentEntityController extends Controller
     private IGovernmentEntityRepo $governmentEntityRepo;
 
     public function __construct(IGovernmentEntityRepo $governmentEntityRepo1){
-        $governmentEntityRepo = $governmentEntityRepo1;
+        $this->governmentEntityRepo = $governmentEntityRepo1;
     }
 
     public function index(){
@@ -29,7 +29,14 @@ class GovernmentEntityController extends Controller
     }
 
     public function store(Request $request){
-        //
+        $validated = $request->validate([
+            'name' => 'required|string|max:255|unique:government_entities,name',
+            'description' => 'nullable|string',
+            'contact_email' => 'nullable|email|max:255',
+            'contact_phone' => 'nullable|string|max:20',
+        ]);
+        $this->governmentEntityRepo->insert($validated);
+        return response()->json(['message' => 'The data has been inserted succesfully ']);
     }
 
     public function update($id , Request $request){

@@ -43,7 +43,15 @@ return [
         'citizen' => [
             'driver' => 'jwt',
             'provider' => 'citizens',
-        ],    
+        ],   
+        'employee' => [
+            'driver' => 'jwt',
+            'provider' => 'employees',
+        ],   
+        'admin' => [
+            'driver' => 'jwt',
+            'provider' => 'admins',
+        ],   
         'web' => [
             'driver' => 'session',
             'provider' => 'users',
@@ -76,6 +84,16 @@ return [
         'citizens' => [
             'driver' => 'eloquent',
             'model' => App\Models\Citizen::class,
+        ],
+
+        'employees' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Employee::class,
+        ],
+
+        'admins' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Admin::class,
         ],
 
         // 'users' => [
