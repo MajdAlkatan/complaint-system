@@ -40,6 +40,10 @@ return [
             'driver' => 'jwt',
             'provider' => 'users',
         ],    
+        'citizen' => [
+            'driver' => 'jwt',
+            'provider' => 'citizens',
+        ],    
         'web' => [
             'driver' => 'session',
             'provider' => 'users',
@@ -67,6 +71,11 @@ return [
         'users' => [
             'driver' => 'eloquent',
             'model' => env('AUTH_MODEL', App\Models\User::class),
+        ],
+
+        'citizens' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Citizen::class,
         ],
 
         // 'users' => [

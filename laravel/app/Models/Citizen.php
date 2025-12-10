@@ -5,8 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Tymon\JWTAuth\Contracts\JWTSubject;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Citizen extends Model
+class Citizen extends Authenticatable  implements JWTSubject
 {
     use HasFactory;
 
@@ -49,5 +51,22 @@ class Citizen extends Model
     public function loginAttempts(): HasMany
     {
         return $this->hasMany(LoginAttempt::class, 'citizen_id');
+    }
+
+
+
+    
+
+    public function getAuthPassword(){
+        return $this->password_hash;
+    }
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    public function getJWTCustomClaims()
+    {
+        return [];
     }
 }
