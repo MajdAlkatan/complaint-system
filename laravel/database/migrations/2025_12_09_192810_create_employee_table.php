@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('employee', function (Blueprint $table) {
+        Schema::create('employees', function (Blueprint $table) {
             // PK: employee_id
             // استخدمنا هذا الاسم بدلاً من id الافتراضي ليطابق الصورة
             $table->id('employee_id');
@@ -20,13 +20,13 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('password_hash'); // يفضل استخدام password ولكن التزمت بالتسمية في الصورة
             $table->string('username')->unique();
-            $table->boolean('is_verified');
+            $table->boolean('is_verified')->default(false);
             
             // Foreign Key: government_entity_id
             // يفترض أن جدول government_entities موجود مسبقاً
             $table->foreignId('government_entity_id')
                   ->nullable() // جعلته يقبل null تحسباً للأخطاء، يمكنك إزالته إذا كان الحقل إلزامياً
-                  ->constrained('government_entities')
+                  ->constrained('government_entities')->references('government_entities_id')
                   ->nullOnDelete();
 
             // Login Logic
@@ -39,7 +39,7 @@ return new class extends Migration
             // يفترض أن جدول admins موجود مسبقاً
             $table->foreignId('created_by')
                   ->nullable()
-                  ->constrained('admins')
+                  ->constrained('admins')->references('admin_id')
                   ->nullOnDelete();
 
             // Permissions (Booleans with Defaults)
@@ -52,7 +52,7 @@ return new class extends Migration
             // Audit: permissions_updated_by
             $table->foreignId('permissions_updated_by')
                   ->nullable()
-                  ->constrained('admins')
+                  ->constrained('admins')->references('admin_id')
                   ->nullOnDelete();
 
             // created_at & updated_at (TIMESTAMPTZ)

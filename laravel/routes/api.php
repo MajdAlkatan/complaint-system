@@ -24,6 +24,15 @@ Route::post('admins/login', [AdminController::class, 'login'])
 ->middleware('LogUserActivity');
 
 
+Route::post('employees/add', [EmployeeController::class, 'store'])
+->middleware(['LogUserActivity' , 'admin' ]);
+
+
+
+Route::post('admins/login', [AdminController::class, 'login'])
+->middleware('LogUserActivity');
+
+
 Route::post('citizens/register', [CitizenController::class, 'register'])
 ->middleware('LogUserActivity');
 
@@ -105,22 +114,21 @@ Route::post('employee', [EmployeeController::class, 'store'])
     ->middleware(middleware: 'auth:api');
 Route::delete('employee/{id}', action: [EmployeeController::class, 'delete'])
     ->middleware('auth:api');
-Route::put('employee/{id}', [EmployeeController::class, 'update'])
-    ->middleware('auth:api');
-
+Route::post('employees/{id}/edit', [EmployeeController::class, 'update'])
+->middleware(['LogUserActivity' , 'admin' ]);
         
 /*
 *************
 *GovernmentEntity*
 *************
 */
-Route::get('governmentEntity', [GovernmentEntityController::class, 'index'])
+Route::get('governmentEntites', [GovernmentEntityController::class, 'index'])
     ->middleware('auth:api');
-Route::get('governmentEntity/{id}', [GovernmentEntityController::class, 'getById'])
+Route::get('governmentEntites/{id}', [GovernmentEntityController::class, 'getById'])
     ->middleware('auth:api');
-Route::post('governmentEntity', [GovernmentEntityController::class, 'store'])
-    ->middleware(middleware: 'auth:api');
-Route::delete('governmentEntity/{id}', action: [GovernmentEntityController::class, 'delete'])
+Route::post('governmentEntites', [GovernmentEntityController::class, 'store'])
+    ->middleware(middleware: [/*'auth:api' ,*/ 'admin']);
+Route::delete('governmentEntites/{id}', action: [GovernmentEntityController::class, 'delete'])
     ->middleware('auth:api');
-Route::put('governmentEntity/{id}', [GovernmentEntityController::class, 'update'])
+Route::put('governmentEntites/{id}', [GovernmentEntityController::class, 'update'])
     ->middleware('auth:api');

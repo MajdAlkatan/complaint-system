@@ -19,6 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // تسجيل الـ Middleware كـ Route Middleware
         $middleware->alias([
             'LogUserActivity' => \App\Http\Middleware\LogUserActivity::class,
+            'admin' => \App\Http\Middleware\CheckAdmin::class,
         ]);        
     })
     ->withExceptions(function (Exceptions $exceptions) {

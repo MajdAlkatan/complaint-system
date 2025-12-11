@@ -12,6 +12,8 @@ class GovernmentEntity extends Model
 
     protected $table = 'government_entities';
     protected $primaryKey = 'government_entities_id';
+    public $timestamps = false;
+
 
     protected $fillable = [
         'name',
