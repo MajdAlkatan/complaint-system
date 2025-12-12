@@ -1,10 +1,11 @@
+import 'package:complaint/data/repositories/auth_repository.dart';
 import 'package:get/get.dart';
 import '../../../data/models/complaint_model.dart';
 import '../../../data/repositories/complaint_repository.dart';
 
 class HomeController extends GetxController {
   final ComplaintRepository _complaintRepository = Get.find();
-  
+   final AuthRepository _authRepository = Get.find();
   var complaints = <Complaint>[].obs;
   var isLoading = false.obs;
   var selectedFilter = 'All'.obs;
@@ -17,6 +18,11 @@ class HomeController extends GetxController {
     super.onInit();
   }
   
+   // Get user name from auth repository
+  String get userName {
+    final user = _authRepository.currentUser;
+    return user?.fullName.split(' ').first ?? 'User';
+  }
   Future<void> fetchComplaints() async {
     try {
       isLoading.value = true;
@@ -72,6 +78,5 @@ class HomeController extends GetxController {
   }
   
   // Mock user data - replace with actual user data from your auth system
-  String get userName => 'John Citizen';
   String get organizationName => 'SYRIAN GOVERNMENT COMPLAINTS';
 }

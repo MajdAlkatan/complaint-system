@@ -1,7 +1,7 @@
 class ApiResponse<T> {
   final bool success;
   final String message;
-  final T? data;
+  final dynamic? data;
   final int? statusCode;
 
   ApiResponse({

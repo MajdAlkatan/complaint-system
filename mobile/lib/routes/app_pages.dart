@@ -1,12 +1,12 @@
+import 'package:complaint/modules/auth/bindings/citizen_register_binding.dart';
 import 'package:complaint/modules/auth/views/splash_screen.dart';
 import 'package:complaint/modules/profile/bindings/profile_binding.dart';
 import 'package:complaint/modules/profile/views/profile_page.dart';
 import 'package:get/get.dart';
 import '../modules/auth/views/login_page.dart';
-import '../modules/auth/views/register_page.dart';
+import '../modules/auth/views/citizen_register_page.dart';
 import '../modules/auth/views/verification_code_page.dart';
 import '../modules/home/views/home_page.dart';
-import '../modules/home/views/home_page_empty.dart';
 import '../modules/home/views/search_page.dart';
 import '../modules/home/views/search_page_empty.dart';
 import '../modules/complaint/views/complaint_history_page.dart';
@@ -14,7 +14,6 @@ import '../modules/complaint/views/complaint_details_page.dart';
 import '../modules/complaint/views/add_new_complaint_page.dart';
 
 // Import bindings
-import '../modules/auth/bindings/auth_binding.dart';
 import '../modules/auth/bindings/login_binding.dart';
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/complaint/bindings/complaint_binding.dart';
@@ -35,9 +34,9 @@ class AppPages {
       binding: LoginBinding(),
     ),
     GetPage(
-      name: AppRoutes.REGISTER,
-      page: () => RegisterPage(),
-      binding: LoginBinding(),
+      name: AppRoutes.CITIZEN_REGISTER,
+      page: () => CitizenRegisterPage(),
+      binding: CitizenRegisterBinding(),
     ),
     GetPage(
       name: AppRoutes.VERIFICATION_CODE,
@@ -48,11 +47,7 @@ class AppPages {
       page: () => HomePage(),
       binding: HomeBinding(),
     ),
-    GetPage(
-      name: AppRoutes.HOME_EMPTY,
-      page: () => HomePageEmpty(),
-      binding: HomeBinding(),
-    ),
+  
     GetPage(
       name: AppRoutes.SEARCH,
       page: () => SearchPage(),
