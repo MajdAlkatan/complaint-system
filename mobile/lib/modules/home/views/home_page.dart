@@ -2,7 +2,7 @@ import 'package:complaint/core/theme/colors.dart';
 import 'package:complaint/core/utils/extensions.dart';
 import 'package:complaint/core/widgets/main_layout.dart';
 import 'package:complaint/data/models/complaint_model.dart';
-import 'package:complaint/modules/auth/controllers/auth_controller.dart';
+import 'package:complaint/data/repositories/auth_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/home_controller.dart';
@@ -38,10 +38,6 @@ class HomePage extends GetView<HomeController> {
       }),
     ));
   }
-
- 
-
-  
 
   Widget _buildHeader() {
     return Container(
@@ -155,18 +151,39 @@ class HomePage extends GetView<HomeController> {
         title: Text('Logout'),
         content: Text('Are you sure you want to logout?'),
         actions: [
-          TextButton(onPressed: () => Get.back(), child: Text('Cancel')),
           TextButton(
-            onPressed: () {
+            onPressed: () => Get.back(),
+            child: Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () async {
               Get.back();
-              // Call logout method from auth controller
-              Get.find<AuthController>().logout();
+              await _performLogout();
             },
-            child: Text('Logout'),
+            child: Text(
+              'Logout',
+              style: TextStyle(color: AppColors.error),
+            ),
           ),
         ],
       ),
     );
+  }
+
+  Future<void> _performLogout() async {
+    try {
+      // Clear the token from storage
+      final authRepository = Get.find<AuthRepository>();
+      await authRepository.logout();
+      
+      // Navigate to login page
+      Get.offAllNamed('/login');
+      
+    } catch (e) {
+      print('Logout error: $e');
+      // Still navigate to login even if there's an error
+      Get.offAllNamed('/login');
+    }
   }
 
   Widget _buildQuickAction() {

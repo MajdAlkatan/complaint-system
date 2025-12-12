@@ -3,7 +3,6 @@ import 'package:complaint/core/widgets/custom_button.dart';
 import 'package:complaint/core/widgets/custom_textfield.dart';
 import 'package:complaint/core/widgets/loading_widget.dart';
 import 'package:complaint/core/widgets/main_layout.dart';
-import 'package:complaint/modules/auth/controllers/auth_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/profile_controller.dart';
@@ -326,7 +325,6 @@ class ProfilePage extends GetView<ProfileController> {
           TextButton(
             onPressed: () {
               Get.back();
-              Get.find<AuthController>().logout();
             },
             child: Text('Logout', style: TextStyle(color: AppColors.error)),
           ),

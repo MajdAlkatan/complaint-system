@@ -1,12 +1,49 @@
-import 'package:complaint/routes/app_routes.dart';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'core/theme/app_theme.dart';
-import 'core/bindings/global_binding.dart';
 import 'routes/app_pages.dart';
+import 'data/services/storage_service.dart';
+import 'data/services/api_service.dart';
+import 'data/repositories/auth_repository.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // Initialize services BEFORE running the app
+  await initializeServices();
+  
+  // Catch and handle errors
+  FlutterError.onError = (details) {
+    print('Flutter Error: ${details.exception}');
+    print('Stack trace: ${details.stack}');
+  };
+  
+  PlatformDispatcher.instance.onError = (error, stack) {
+    print('Platform Error: $error');
+    print('Stack trace: $stack');
+    return true;
+  };
+
   runApp(MyApp());
+}
+
+Future<void> initializeServices() async {
+  try {
+    // Initialize StorageService first
+    await Get.putAsync(() => StorageService().init());
+    
+    // Initialize ApiService
+    await Get.putAsync(() => ApiService().init());
+    
+    // Initialize AuthRepository
+    Get.put(AuthRepository());
+    
+    print('All services initialized successfully');
+  } catch (e) {
+    print('Error initializing services: $e');
+    rethrow;
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -15,11 +52,10 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       title: 'Complaint App',
       theme: AppTheme.lightTheme,
-      initialRoute: AppRoutes.SPLASH,
+      initialRoute: '/splash',
       getPages: AppPages.pages,
       debugShowCheckedModeBanner: false,
       defaultTransition: Transition.cupertino,
-      initialBinding: GlobalBinding(),
     );
   }
 }
