@@ -89,16 +89,28 @@ Route::put('citizen/{id}', [CitizenController::class, 'update'])
 *Complaint*
 *************
 */
-Route::get('complaint', [ComplaintController::class, 'index'])
-    ->middleware('auth:api');
-Route::get('complaint/{id}', [ComplaintController::class, 'getById'])
-    ->middleware('auth:api');
-Route::post('complaint', [ComplaintController::class, 'store'])
-    ->middleware(middleware: 'auth:api');
-Route::delete('complaint/{id}', action: [ComplaintController::class, 'delete'])
-    ->middleware('auth:api');
-Route::put('complaint/{id}', [ComplaintController::class, 'update'])
-    ->middleware('auth:api');
+Route::get('complaints', [ComplaintController::class, 'index'])
+    ->middleware('employee');
+Route::get('complaints/Mycomplaints', [ComplaintController::class, 'getMyComplaints'])
+    ->middleware('citizen');
+Route::get('complaints/Mycomplaints/{id}', [ComplaintController::class, 'getMyComplaintById'])
+    ->middleware('citizen');
+Route::get('complaints/{id}', [ComplaintController::class, 'getById'])
+    ->middleware('employee');
+Route::get('complaints/byRef/{num}', [ComplaintController::class, 'getByReferenceNumber'])
+    ->middleware('employee');
+Route::post('complaints', [ComplaintController::class, 'store'])
+    ->middleware(middleware: 'citizen');
+Route::post('complaints/addType', [ComplaintController::class, 'storeType'])
+    ->middleware(middleware: 'admin');
+Route::delete('complaints/{id}', action: [ComplaintController::class, 'delete'])
+    ->middleware('citizen');
+Route::put('complaints/Mycomplaints/{id}', [ComplaintController::class, 'updateMyComplaint'])
+    ->middleware('citizen');
+Route::put('complaints/{id}', [ComplaintController::class, 'update'])
+    ->middleware('employee');
+
+
 
         
 /*
@@ -106,13 +118,15 @@ Route::put('complaint/{id}', [ComplaintController::class, 'update'])
 *Employee*
 *************
 */
-Route::get('employee', [EmployeeController::class, 'index'])
+Route::get('employees', [EmployeeController::class, 'index'])
     ->middleware('auth:api');
-Route::get('employee/{id}', [EmployeeController::class, 'getById'])
+Route::get('employees/{id}', [EmployeeController::class, 'getById'])
     ->middleware('auth:api');
-Route::post('employee', [EmployeeController::class, 'store'])
+Route::post('employees', [EmployeeController::class, 'store'])
     ->middleware(middleware: 'auth:api');
-Route::delete('employee/{id}', action: [EmployeeController::class, 'delete'])
+Route::post('employees/login', [EmployeeController::class, 'login']);
+
+Route::delete('employees/{id}', action: [EmployeeController::class, 'delete'])
     ->middleware('auth:api');
 Route::post('employees/{id}/edit', [EmployeeController::class, 'update'])
 ->middleware(['LogUserActivity' , 'admin' ]);

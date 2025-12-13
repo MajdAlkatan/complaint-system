@@ -21,7 +21,7 @@ return new class extends Migration
 
             // Foreign Key: citizen_id -> users(id)
             $table->foreignId('citizen_id')
-                  ->constrained('users')
+                  ->constrained('citizens')->references('citizen_id')
                   ->cascadeOnDelete(); // أو restrictOnDelete حسب منطق العمل
 
             // Foreign Key: entity_id -> government_entities(id)
@@ -56,7 +56,7 @@ return new class extends Migration
             // Foreign Key: locked_by_employee_id -> employees(id)
             $table->foreignId('locked_by_employee_id')
                   ->nullable() // يجب أن يكون nullable لأن الشكوى قد لا تكون مقفلة
-                  ->constrained('employees')
+                  ->constrained('employees')->references('employee_id')
                   ->nullOnDelete();
 
             // locked_at TIMESTAMPTZ DEFAULT NOW()

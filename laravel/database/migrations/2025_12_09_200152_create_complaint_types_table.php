@@ -11,7 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-
+        Schema::create('complaint_types', function (Blueprint $table) {
+            $table->id();
+            $table->string('type')->unique();
+            $table->timestampTz('createdAt')->default(now());
+        });
     }
 
     /**
@@ -19,5 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('complaint_types');
     }
 };

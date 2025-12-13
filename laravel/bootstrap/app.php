@@ -20,6 +20,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'LogUserActivity' => \App\Http\Middleware\LogUserActivity::class,
             'admin' => \App\Http\Middleware\CheckAdmin::class,
+            'employee' => \App\Http\Middleware\checkEmployee::class,
+            'citizen' => \App\Http\Middleware\checkCitizen::class,
         ]);        
     })
     ->withExceptions(function (Exceptions $exceptions) {

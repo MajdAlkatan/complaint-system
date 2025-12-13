@@ -44,7 +44,7 @@ class EmployeeController extends Controller
 
         ]);
         $validated['created_by'] = auth()->id();
-        $validated['password_hash'] = $request->password;
+        $validated['password_hash'] = Hash::make($request->password);
         $employee = $this->employeeRepo->insert($validated);
 
         return response()->json([

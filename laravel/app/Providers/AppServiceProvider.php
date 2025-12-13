@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Interfaces\IComplaintTypeRepo;
+use App\Repositories\ComplaintTypeRepo;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Http\Request;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -37,6 +39,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(IAttachmentRepo::class, AttachmentRepo::class);
         $this->app->bind(ICitizenRepo::class, CitizenRepo::class);
         $this->app->bind(IComplaintRepo::class, ComplaintRepo::class);
+        $this->app->bind(IComplaintTypeRepo::class, ComplaintTypeRepo::class);
         $this->app->bind(IEmployeeRepo::class, EmployeeRepo::class);
         $this->app->bind(IGovernmentEntityRepo::class, GovernmentEntityRepo::class);
         $this->app->bind(IInformationRequestRepo::class, InformationRequestRepo::class);

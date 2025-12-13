@@ -63,4 +63,9 @@ class Complaint extends Model
     {
         return $this->belongsTo(Employee::class, 'locked_by_employee_id');
     }
+
+    public function complaintType(): BelongsTo
+    {
+        return $this->belongsTo(ComplaintType::class, 'complaint_type');
+    }
 }
