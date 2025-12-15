@@ -71,7 +71,7 @@ class CitizenController extends Controller
         if (!$token = auth()->guard('citizen')->attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
-        $user = Auth::guard('admin')->user();
+        $user = Auth::guard('citizen')->user();
 
         // إنشاء refresh token
         $refreshToken = $this->createRefreshToken($user);

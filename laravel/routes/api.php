@@ -81,8 +81,10 @@ Route::get('citizen', [CitizenController::class, 'index'])
     ->middleware('auth:api');
 Route::get('citizen/{id}', [CitizenController::class, 'getById'])
     ->middleware('auth:api');
-Route::post('citizen', [CitizenController::class, 'store'])
-    ->middleware('auth:api');
+Route::post('citizen', [CitizenController::class, 'store']);
+    //->middleware('auth:api');
+Route::post('citizens/refresh', [CitizenController::class, 'refresh']);
+    //->middleware('auth:api');
 Route::delete('citizen/{id}', action: [CitizenController::class, 'delete'])
     ->middleware('auth:api');
 Route::put('citizen/{id}', [CitizenController::class, 'update'])
