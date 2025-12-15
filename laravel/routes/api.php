@@ -32,6 +32,8 @@ Route::post('employees/add', [EmployeeController::class, 'store'])
 Route::post('admins/login', [AdminController::class, 'login'])
 ->middleware('LogUserActivity');
 
+Route::post('admins/refresh', [AdminController::class, 'refresh']);
+
 
 Route::post('citizens/register', [CitizenController::class, 'register'])
 ->middleware('LogUserActivity');
@@ -44,6 +46,9 @@ Route::post('citizens/login', [CitizenController::class, 'login'])
     ->middleware(['throttle:login', 'LogUserActivity']);
 
 Route::post('logout', [AuthController::class, 'logout']);
+Route::post('login', [AuthController::class, 'login']);
+
+Route::post('refresh', [AuthController::class, 'refresh']);
 
 Route::get('me', [AuthController::class, 'me'])
     ->middleware('auth:api');
@@ -125,7 +130,7 @@ Route::get('employees/{id}', [EmployeeController::class, 'getById'])
 Route::post('employees', [EmployeeController::class, 'store'])
     ->middleware(middleware: 'auth:api');
 Route::post('employees/login', [EmployeeController::class, 'login']);
-
+Route::post('employees/refresh', [EmployeeController::class, 'refresh']);
 Route::delete('employees/{id}', action: [EmployeeController::class, 'delete'])
     ->middleware('auth:api');
 Route::post('employees/{id}/edit', [EmployeeController::class, 'update'])
