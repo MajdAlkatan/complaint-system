@@ -69,6 +69,10 @@ class ComplaintController extends Controller
     }
 
     public function updateMyComplaint($id , Request $request){
+        $complaint = $this->complaintRepo->getById($id);
+        if($complaint->locked == true)
+            return response()->json(['message' => 'this complaint is locked'] , 400);
+
         $data = $this->complaintRepo->getById($id);
         if(!auth()->guard('citizen')->id() == $data->citizen_id)
             return response()->json(['message' => 'UnAuthorize'] , 403);
@@ -84,8 +88,31 @@ class ComplaintController extends Controller
 
 
     public function update($id , Request $request){
+        $complaint = $this->complaintRepo->getById($id);
+        if($complaint->locked == true && $complaint->locked_by_employee_id != auth()->guard('employee')->id())
+            return response()->json(['message' => 'this complaint is locked'] , 400);
+
         $this->complaintRepo->update($id,$request->all());
         return response()->json(['message' => 'The data has been updated succesfully ']);
+    }
+
+    
+    public function lock($id ){
+        $this->complaintRepo->update($id,[
+            'locked' => true ,
+            'locked_by_employee_id' => auth()->guard('employee')->id() ,
+            'locked_at' => now()
+        ]);
+        return response()->json(['message' => 'The complaint has been locked succesfully ']);
+    }
+
+    public function unLock($id ){
+        $this->complaintRepo->update($id,[
+            'locked' => false ,
+            'locked_by_employee_id' => null ,
+            'locked_at' => null
+        ]);
+        return response()->json(['message' => 'The complaint has been locked succesfully ']);
     }
 
 
