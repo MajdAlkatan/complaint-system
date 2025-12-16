@@ -10,7 +10,7 @@ class AttachmentController extends Controller
     private IAttachmentRepo $attachmentRepo;
 
     public function __construct(IAttachmentRepo $attachmentRepo1){
-        $attachmentRepo = $attachmentRepo1;
+        $this->attachmentRepo = $attachmentRepo1;
     }
 
     public function index(){
@@ -32,14 +32,31 @@ class AttachmentController extends Controller
     public function store(Request $request){
         $validated = $request->validate([
             'complaint_id' => 'required',
-            'file_path' => 'required',
-            'file_type' => 'required',
-            'uploaded_at' => 'required|date',
+            //'file_path' => 'required',
+            //'file_type' => 'required',
+            //'uploaded_at' => 'required|date',
+            //'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
-        $this->attachmentRepo->insert($validated);
+        $attatchment = $this->attachmentRepo->insert($validated);
+
+        $request->validate([
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+        $fileName = $attatchment->attachments_id . '.' . $request->file('image')->extension();
+        $path = $request->file('image')->storeAs('attatchments/', $fileName, 'public');
         return response()->json(['message' => 'The data has been inserted succesfully ']);
     }
 
+
+    public function upload(Request $request){
+        $validated = $request->validate([
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        
+        $this->attachmentRepo->insert($validated);
+        return response()->json(['message' => 'The data has been inserted succesfully ']);
+    }
     public function update($id , Request $request){
         $this->attachmentRepo->update($id,$validated);
         return response()->json(['message' => 'The data has been updated succesfully ']);

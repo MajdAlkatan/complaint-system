@@ -60,15 +60,15 @@ Route::get('me', [AuthController::class, 'me'])
 *Attachment*
 *************
 */
-Route::get('attachment', [AttachmentController::class, 'index'])
+Route::get('attachments', [AttachmentController::class, 'index'])
     ->middleware('auth:api');
-Route::get('attachment/{id}', [AttachmentController::class, 'getById'])
+Route::get('attachments/{id}', [AttachmentController::class, 'getById'])
     ->middleware('auth:api');
-Route::post('attachment', [AttachmentController::class, 'store'])
+Route::post('attachments', [AttachmentController::class, 'store']);
+    //->middleware('auth:api');
+Route::delete('attachments/{id}', [AttachmentController::class, 'delete'])
     ->middleware('auth:api');
-Route::delete('attachment/{id}', [AttachmentController::class, 'delete'])
-    ->middleware('auth:api');
-Route::put('attachment/{id}', [AttachmentController::class, 'update'])
+Route::put('attachments/{id}', [AttachmentController::class, 'update'])
     ->middleware('auth:api');
 
     
