@@ -12,7 +12,9 @@ class Attachment extends Model
 
     protected $table = 'attachments';
     protected $primaryKey = 'attachments_id';
+    public $timestamps = false;
 
+    
     protected $fillable = [
         'complaint_id',
         'file_path',

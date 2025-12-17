@@ -18,6 +18,11 @@ class AttachmentController extends Controller
         return response()->json($data);
     }
 
+    public function GetByComplaintId($id){
+        $data = $this->attachmentRepo->getWhereEq('complaint_id', $id);
+        return response()->json($data);
+    }
+
     public function getById($id){
         $data = $this->attachmentRepo->getById($id);
         return response()->json($data);
@@ -37,6 +42,8 @@ class AttachmentController extends Controller
             //'uploaded_at' => 'required|date',
             //'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
+        $validated['file_path'] = 'none';
+        $validated['file_type'] = 'none';
         $attatchment = $this->attachmentRepo->insert($validated);
 
         $request->validate([
@@ -44,7 +51,11 @@ class AttachmentController extends Controller
         ]);
         $fileName = $attatchment->attachments_id . '.' . $request->file('image')->extension();
         $path = $request->file('image')->storeAs('attatchments/', $fileName, 'public');
-        return response()->json(['message' => 'The data has been inserted succesfully ']);
+        $this->attachmentRepo->update($attatchment->attachments_id , [
+            'file_path' => $path,
+            'file_type' => $request->file('image')->extension()
+        ]);
+        return response()->json(['path' => $path ]);
     }
 
 
@@ -58,7 +69,7 @@ class AttachmentController extends Controller
         return response()->json(['message' => 'The data has been inserted succesfully ']);
     }
     public function update($id , Request $request){
-        $this->attachmentRepo->update($id,$validated);
+        $this->attachmentRepo->update($id,$request->all());
         return response()->json(['message' => 'The data has been updated succesfully ']);
     }
 }

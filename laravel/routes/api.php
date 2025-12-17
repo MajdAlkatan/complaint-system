@@ -60,12 +60,14 @@ Route::get('me', [AuthController::class, 'me'])
 *Attachment*
 *************
 */
-Route::get('attachments', [AttachmentController::class, 'index'])
-    ->middleware('auth:api');
-Route::get('attachments/{id}', [AttachmentController::class, 'getById'])
-    ->middleware('auth:api');
+Route::get('attachments', [AttachmentController::class, 'index']);
+    //->middleware('auth:api');
+Route::get('attachments/{id}', [AttachmentController::class, 'getById']);
+    //->middleware('auth:api');
 Route::post('attachments', [AttachmentController::class, 'store']);
     //->middleware('auth:api');
+Route::get('attachments/byComplaint/{id}', [AttachmentController::class, 'GetByComplaintId']);
+
 Route::delete('attachments/{id}', [AttachmentController::class, 'delete'])
     ->middleware('auth:api');
 Route::put('attachments/{id}', [AttachmentController::class, 'update'])
