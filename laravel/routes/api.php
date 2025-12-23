@@ -115,9 +115,13 @@ Route::post('complaints/addType', [ComplaintController::class, 'storeType'])
 Route::delete('complaints/{id}', action: [ComplaintController::class, 'delete'])
     ->middleware('citizen');
 Route::put('complaints/Mycomplaints/{id}', [ComplaintController::class, 'updateMyComplaint'])
-    ->middleware('citizen');
-Route::put('complaints/{id}', [ComplaintController::class, 'update'])
+    ->middleware('citizen')->name('editMyComplaint');
+Route::put('complaints/lock/{id}', [ComplaintController::class, 'lock'])
     ->middleware('employee');
+Route::put('complaints/unLock/{id}', [ComplaintController::class, 'unLock'])
+    ->middleware('employee');
+Route::put('complaints/{id}', [ComplaintController::class, 'update'])
+    ->middleware('employee')->name('editComplaint');
 
 
 

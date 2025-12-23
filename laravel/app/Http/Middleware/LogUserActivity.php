@@ -7,8 +7,15 @@ use Illuminate\Http\Request;
 use Spatie\Activitylog\Models\Activity;
 use Illuminate\Support\Facades\Auth;
 
+use App\Interfaces\IComplaintRepo;
+
 class LogUserActivity
 {
+
+   private IComplaintRepo $complaintRepo;
+    public function __construct(IComplaintRepo $complaintRepo1){
+        $this->complaintRepo = $complaintRepo1;
+    }
     public function handle(Request $request, Closure $next)
     {
         $response = $next($request);
@@ -46,7 +53,21 @@ class LogUserActivity
                 ])
                 ->log('Citizen ' . Auth::guard('citizen')->user()->email . ' performed an action');
         }
+/*
+        if($request->method() == 'PUT'  && $request->route()->getName() == 'editComplaint'){
+            $complaint = $this->complaintRepo->getById($request->id);
 
+                activity('edit-complaint-status')
+                ->causedBy(Auth::guard('employee')->user())
+                ->withProperties([
+                    'ip' => $request->ip(),
+                    'method' => $request->method(),
+                    'url' => $request->fullUrl(),
+                    'new-status' => $complaint->status
+                ])
+                ->log('ُEmployee ' . Auth::guard('employee')->user()->email . ' editied a complaint'. $complaint->$complaints_id);
+        }
+*/
         return $response;
     }
 }

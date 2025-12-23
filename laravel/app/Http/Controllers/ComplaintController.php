@@ -4,19 +4,24 @@ namespace App\Http\Controllers;
 use App\Interfaces\IComplaintRepo;
 use App\Interfaces\IComplaintTypeRepo;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Broadcast;
+use MyEvent;
+use Pusher\Pusher;
 
 class ComplaintController extends Controller
 {
+    private Pusher $pusher;
     private IComplaintRepo $complaintRepo;
     private IComplaintTypeRepo $complaintTypeRepo;
-
     public function __construct(IComplaintRepo $complaintRepo1, IComplaintTypeRepo $complaintTypeRepo1){
         $this->complaintRepo = $complaintRepo1;
         $this->complaintTypeRepo = $complaintTypeRepo1;
+        $this->pusher = Broadcast::connection('pusher')->getPusher();
     }
 
     public function index(){
         $data = $this->complaintRepo->getAll();
+        event(new MyEvent('hello world'));
         return response()->json($data);
     }
 
@@ -47,10 +52,13 @@ class ComplaintController extends Controller
 
 
     public function delete($id){
+     
         $data = $this->complaintRepo->getById($id);
         if(!auth()->guard('citizen')->id() == $data->citizen_id)
             return response()->json(['message' => 'UnAuthorize'] , 403);
         $data = $this->complaintRepo->delete($id);
+
+        $this->pusher->trigger('User'. auth()->guard('citizen')->id() , 'Delete Complaint' , ['message' => 'your complaint have been deleted'] );
         return response()->json(['message' => 'deleted']);
     }
 
@@ -64,8 +72,9 @@ class ComplaintController extends Controller
         $validated['reference_number'] = \Illuminate\Support\Str::uuid()->toString();
         $validated['status'] = 'new';
         $validated['citizen_id'] = auth()->guard('citizen')->id();
-        $this->complaintRepo->insert($validated);
-        return response()->json(['message' => 'The data has been inserted succesfully ']);
+        $complaint = $this->complaintRepo->insert($validated);
+        $this->pusher->trigger('User'. auth()->guard('citizen')->id() , 'Add Complaint' , ['message' => 'complaint have been added'] );
+        return response()->json(['complaint' => $complaint]);
     }
 
     public function updateMyComplaint($id , Request $request){
@@ -83,6 +92,7 @@ class ComplaintController extends Controller
             'description' => 'string|min:10|max:65535',
         ]);
         $this->complaintRepo->update($id,$validated);
+        $this->pusher->trigger('User'. auth()->guard('citizen')->id() , 'Update Complaint' , ['message' => 'complaint have been updated by citizen'] );
         return response()->json(['message' => 'The data has been updated succesfully ']);
     }
 
@@ -93,6 +103,7 @@ class ComplaintController extends Controller
             return response()->json(['message' => 'this complaint is locked'] , 400);
 
         $this->complaintRepo->update($id,$request->all());
+        $this->pusher->trigger('User'. auth()->guard('employee')->id() , 'Update Complaint' , ['message' => 'complaint have been updated by employee '] );
         return response()->json(['message' => 'The data has been updated succesfully ']);
     }
 
@@ -112,7 +123,7 @@ class ComplaintController extends Controller
             'locked_by_employee_id' => null ,
             'locked_at' => null
         ]);
-        return response()->json(['message' => 'The complaint has been locked succesfully ']);
+        return response()->json(['message' => 'The complaint has been unLocked succesfully ']);
     }
 
 
