@@ -19,6 +19,22 @@ class LogUserActivity
     public function handle(Request $request, Closure $next)
     {
         $response = $next($request);
+
+
+        if( $request->route()->getName() == 'editComplaint'){
+            $complaint = $this->complaintRepo->getById($request->id);
+
+                activity('edit-complaint-status')
+                ->causedBy(Auth::guard('employee')->user())
+                ->withProperties([
+                    'ip' => $request->ip(),
+                    'method' => $request->method(),
+                    'url' => $request->fullUrl(),
+                    'new-status' => $complaint->status
+                ])
+                ->log('ُEmployee ' . Auth::guard('employee')->user()->email . ' editied a complaint'. $complaint->complaints_id);
+        }else{
+
         if(Auth::guard('admin')->check()){
             activity('user-actions')
                 ->causedBy(Auth::guard('admin')->user())
@@ -53,21 +69,8 @@ class LogUserActivity
                 ])
                 ->log('Citizen ' . Auth::guard('citizen')->user()->email . ' performed an action');
         }
-/*
-        if($request->method() == 'PUT'  && $request->route()->getName() == 'editComplaint'){
-            $complaint = $this->complaintRepo->getById($request->id);
+    }
 
-                activity('edit-complaint-status')
-                ->causedBy(Auth::guard('employee')->user())
-                ->withProperties([
-                    'ip' => $request->ip(),
-                    'method' => $request->method(),
-                    'url' => $request->fullUrl(),
-                    'new-status' => $complaint->status
-                ])
-                ->log('ُEmployee ' . Auth::guard('employee')->user()->email . ' editied a complaint'. $complaint->$complaints_id);
-        }
-*/
         return $response;
     }
 }
