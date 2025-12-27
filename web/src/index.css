@@ -1,0 +1,38 @@
+/* app.css or index.css */
+@import "tailwindcss";
+@config "../tailwind.config.ts";
+
+@tailwind utilities;
+
+:root {
+  --primary: 106deg 100% 25% / 70%;
+  --primary-foreground: 0deg 0% 100%;
+  --hover: 106deg 100% 25% / 90%;
+  --hover-foreground: 0deg 0% 100%;
+  --primary-solid: 106deg 100% 25%;
+  --background: 0deg 0% 100%;
+  --foreground: 222.2deg 84% 4.9%;
+  --card: 0deg 0% 100%;
+  --card-foreground: 222.2deg 84% 4.9%;
+  --popover: 0deg 0% 100%;
+  --popover-foreground: 222.2deg 84% 4.9%;
+  --muted: 210deg 40% 96.1%;
+  --muted-foreground: 215.4deg 16.3% 46.9%;
+  --accent: 210deg 40% 96.1%;
+  --accent-foreground: 222.2deg 47.4% 11.2%;
+  --border: 214.3deg 31.8% 91.4%;
+  --input: 214.3deg 31.8% 91.4%;
+  --ring: 222.2deg 84% 4.9%;
+  --radius: 0.5rem;
+}
+
+.dark {
+  --primary: 142.1deg 76.2% 36.3%;
+  --primary-foreground: 355.7deg 100% 97.3%;
+  --hover: 142.1deg 71.8% 29.2%;
+
+  --background: 222.2deg 84% 4.9%;
+  --foreground: 210deg 40% 98%;
+  --card: 222.2deg 84% 4.9%;
+  --card-foreground: 210deg 40% 98%;
+}
