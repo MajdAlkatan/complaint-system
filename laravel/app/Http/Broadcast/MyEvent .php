@@ -10,7 +10,7 @@ class MyEvent implements ShouldBroadcast
   use Dispatchable, InteractsWithSockets, SerializesModels;
 
   public $message;
-
+//majd
   public function __construct($message)
   {
       $this->message = $message;
