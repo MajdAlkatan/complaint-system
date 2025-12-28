@@ -17,7 +17,9 @@ class checkEmployee
     public function handle(Request $request, Closure $next): Response
     {
         if (!Auth::guard('employee')->check()) {
-             return response()->json(['error' => 'Unauthorized'], 401);
+            if (!Auth::guard('admin')->check()){
+                return response()->json(['error' => 'Unauthorized'], 401);
+            }
         }
         return $next($request);
     }

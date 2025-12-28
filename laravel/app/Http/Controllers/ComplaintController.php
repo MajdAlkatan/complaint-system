@@ -96,6 +96,35 @@ class ComplaintController extends Controller
         return response()->json(['message' => 'The data has been updated succesfully ']);
     }
 
+    public function requestNotes($id , Request $request){
+        $complaint = $this->complaintRepo->getById($id);
+        if($complaint->locked == true && $complaint->locked_by_employee_id != auth()->guard('employee')->id())
+            return response()->json(['message' => 'this complaint is locked'] , 400);
+        $validated = $request->validate([
+            'message' => 'string|min:10|max:65535',
+        ]);
+        $this->pusher->trigger('User'. auth()->guard('employee')->id() , 'Notes Required' , ['message' => $validated['message']] );
+        return response()->json(['message' => 'Your request have sent to the citizen']);
+    }
+
+    public function addNotesForMyComplaint($id , Request $request){
+        $complaint = $this->complaintRepo->getById($id);
+        if($complaint->locked == true)
+            return response()->json(['message' => 'this complaint is locked'] , 400);
+
+        $data = $this->complaintRepo->getById($id);
+        if(!auth()->guard('citizen')->id() == $data->citizen_id)
+            return response()->json(['message' => 'UnAuthorize'] , 403);
+        $validated = $request->validate([
+            'notes' => 'string|min:10|max:65535',
+        ]);
+        $this->complaintRepo->update($id,[
+            'description' => $data->description . '\nnotes : \n' .  $validated['notes'] ,
+        ]);
+        $this->pusher->trigger('User'. auth()->guard('citizen')->id() , 'Add Notes' , ['message' => 'complaint have been updated by citizen'] );
+        return response()->json(['message' => 'The data has been updated succesfully ']);
+    }
+
 
     public function update($id , Request $request){
         $complaint = $this->complaintRepo->getById($id);

@@ -120,6 +120,10 @@ Route::put('complaints/lock/{id}', [ComplaintController::class, 'lock'])
     ->middleware('employee');
 Route::put('complaints/unLock/{id}', [ComplaintController::class, 'unLock'])
     ->middleware('employee');
+Route::put('complaints/requestNotes/{id}', [ComplaintController::class, 'requestNotes'])
+    ->middleware('employee');
+Route::put('complaints/AddNotes/{id}', [ComplaintController::class, 'addNotesForMyComplaint'])
+    ->middleware('citizen');
 Route::put('complaints/{id}', [ComplaintController::class, 'update'])
     ->middleware('employee')->name('editComplaint');
 
@@ -132,15 +136,15 @@ Route::put('complaints/{id}', [ComplaintController::class, 'update'])
 *************
 */
 Route::get('employees', [EmployeeController::class, 'index'])
-    ->middleware('auth:api');
+    ->middleware('admin');
 Route::get('employees/{id}', [EmployeeController::class, 'getById'])
-    ->middleware('auth:api');
-Route::post('employees', [EmployeeController::class, 'store'])
-    ->middleware(middleware: 'auth:api');
+    ->middleware('admin');
+//Route::post('employees', [EmployeeController::class, 'store'])
+  //  ->middleware(middleware: 'admin');
 Route::post('employees/login', [EmployeeController::class, 'login']);
 Route::post('employees/refresh', [EmployeeController::class, 'refresh']);
 Route::delete('employees/{id}', action: [EmployeeController::class, 'delete'])
-    ->middleware('auth:api');
+    ->middleware('admin');
 Route::post('employees/{id}/edit', [EmployeeController::class, 'update'])
 ->middleware(['LogUserActivity' , 'admin' ]);
         
@@ -150,12 +154,12 @@ Route::post('employees/{id}/edit', [EmployeeController::class, 'update'])
 *************
 */
 Route::get('governmentEntites', [GovernmentEntityController::class, 'index'])
-    ->middleware('auth:api');
+    ->middleware('admin');
 Route::get('governmentEntites/{id}', [GovernmentEntityController::class, 'getById'])
-    ->middleware('auth:api');
+    ->middleware('admin');
 Route::post('governmentEntites', [GovernmentEntityController::class, 'store'])
     ->middleware(middleware: [/*'auth:api' ,*/ 'admin']);
 Route::delete('governmentEntites/{id}', action: [GovernmentEntityController::class, 'delete'])
-    ->middleware('auth:api');
+    ->middleware('admin');
 Route::put('governmentEntites/{id}', [GovernmentEntityController::class, 'update'])
-    ->middleware('auth:api');
+    ->middleware('admin');
