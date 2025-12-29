@@ -1,13 +1,12 @@
 <?php
-
+///app/Http/Controller/ComplaintController.php
 namespace App\Http\Controllers;
 use App\Interfaces\IComplaintRepo;
 use App\Interfaces\IComplaintTypeRepo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Broadcast;
-use MyEvent;
+use App\Broadcast\MyEvent;
 use Pusher\Pusher;
-
 class ComplaintController extends Controller
 {
     private Pusher $pusher;
@@ -21,7 +20,7 @@ class ComplaintController extends Controller
 
     public function index(){
         $data = $this->complaintRepo->getAll();
-        event(new MyEvent('hello world'));
+        // event(new MyEvent('hello world'));
         return response()->json($data);
     }
 
