@@ -24,7 +24,7 @@ class EmployeeController extends Controller
     }
 
     public function getById($id){
-        $data = $this->citizenemployeeRepoRepo->getById($id);
+        $data = $this->employeeRepo->getById($id);
         return response()->json($data);
     }
 
@@ -84,6 +84,7 @@ class EmployeeController extends Controller
             'access_token' => $token,
             'refresh_token' => $refreshToken,
             'token_type' => 'bearer',
+            'user' => $user,
             //'expires_in' => JWTAuth::factory()->getTTL() * 60
         ]);
     }
