@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:complaint/data/repositories/complaint_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'core/theme/app_theme.dart';
@@ -30,18 +31,28 @@ void main() async {
 
 Future<void> initializeServices() async {
   try {
+    print('Initializing services...');
+    
     // Initialize StorageService first
     await Get.putAsync(() => StorageService().init());
+    print('StorageService initialized');
     
     // Initialize ApiService
     await Get.putAsync(() => ApiService().init());
+    print('ApiService initialized');
     
     // Initialize AuthRepository
     Get.put(AuthRepository());
+    print('AuthRepository initialized');
+    
+    // Initialize ComplaintRepository
+    Get.put(ComplaintRepository());
+    print('ComplaintRepository initialized');
     
     print('All services initialized successfully');
-  } catch (e) {
+  } catch (e, s) {
     print('Error initializing services: $e');
+    print('Stack trace: $s');
     rethrow;
   }
 }

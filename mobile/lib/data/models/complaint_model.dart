@@ -1,70 +1,122 @@
+// complaint_model.dart
 class Complaint {
-  final String id;
-  final String title;
+  final String id; // This should be complaints_id from API
+  final String referenceNumber;
+  final int citizenId;
+  final int entityId;
+  final int complaintType;
+  final String location;
   final String description;
-  final String category;
   final String status;
-  final String priority; // Add this field
+  final DateTime? completedAt;
+  final bool locked;
+  final int? lockedByEmployeeId;
+  final DateTime? lockedAt;
   final DateTime createdAt;
-  final DateTime? updatedAt;
-  final String userId;
-  final List<String>? images;
+  final DateTime updatedAt;
 
   Complaint({
     required this.id,
-    required this.title,
+    required this.referenceNumber,
+    required this.citizenId,
+    required this.entityId,
+    required this.complaintType,
+    required this.location,
     required this.description,
-    required this.category,
     required this.status,
-    required this.priority, // Add this
+    this.completedAt,
+    required this.locked,
+    this.lockedByEmployeeId,
+    this.lockedAt,
     required this.createdAt,
-    this.updatedAt,
-    required this.userId,
-    this.images,
+    required this.updatedAt,
   });
 
   factory Complaint.fromJson(Map<String, dynamic> json) {
     return Complaint(
-      id: json['id'] ?? '',
-      title: json['title'] ?? '',
-      description: json['description'] ?? '',
-      category: json['category'] ?? '',
-      status: json['status'] ?? 'pending',
-      priority: json['priority'] ?? 'medium',
-      createdAt: DateTime.parse(json['createdAt']),
-      updatedAt: json['updatedAt'] != null
-          ? DateTime.parse(json['updatedAt'])
-          : null,
-      userId: json['userId'] ?? '',
-      images: json['images'] != null ? List<String>.from(json['images']) : [],
+      id: json['complaints_id']?.toString() ?? json['id']?.toString() ?? '0',
+      referenceNumber: json['reference_number']?.toString() ?? '',
+      citizenId: _parseInt(json['citizen_id']),
+      entityId: _parseInt(json['entity_id']),
+      complaintType: _parseInt(json['complaint_type']),
+      location: json['location']?.toString() ?? 'Not specified',
+      description: json['description']?.toString() ?? '',
+      status: json['status']?.toString() ?? 'new',
+      completedAt: _parseDateTime(json['completed_at']),
+      locked: json['locked'] == true,
+      lockedByEmployeeId: _parseInt(json['locked_by_employee_id']),
+      lockedAt: _parseDateTime(json['locked_at']),
+      createdAt: _parseDateTime(json['created_at']) ?? DateTime.now(),
+      updatedAt: _parseDateTime(json['updated_at']) ?? DateTime.now(),
     );
   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'title': title,
-      'description': description,
-      'category': category,
-      'status': status,
-      'priority': priority,
-      'createdAt': createdAt.toIso8601String(),
-      'updatedAt': updatedAt?.toIso8601String(),
-      'userId': userId,
-      'images': images,
+  // Helper methods for safe parsing
+  static int _parseInt(dynamic value) {
+    if (value == null) return 0;
+    if (value is int) return value;
+    if (value is String) return int.tryParse(value) ?? 0;
+    if (value is double) return value.toInt();
+    return 0;
+  }
+
+  static DateTime? _parseDateTime(dynamic value) {
+    if (value == null) return null;
+    if (value is DateTime) return value;
+    if (value is String) {
+      try {
+        return DateTime.parse(value);
+      } catch (e) {
+        return null;
+      }
+    }
+    return null;
+  }
+
+  // Convenience getters for UI
+  String get title {
+    // Create a title from the description or reference number
+    final firstLine = description.split('\n').first;
+    return firstLine.length > 50 
+        ? '${firstLine.substring(0, 50)}...'
+        : firstLine;
+  }
+
+  String get category {
+    // Map complaint_type to category name
+    return switch (complaintType) {
+      1 => 'Water Supply',
+      2 => 'Electricity',
+      3 => 'Sanitation',
+      4 => 'Road Maintenance',
+      5 => 'Building Issues',
+      6 => 'Other',
+      _ => 'Other',
     };
   }
 
-  String get statusColor {
-    switch (status) {
-      case 'resolved':
-        return '#16A34A';
-      case 'in_progress':
-        return '#D97706';
-      case 'rejected':
-        return '#DC2626';
-      default:
-        return '#64748B';
-    }
+  String get priority {
+    // Determine priority based on complaint type or other logic
+    // You might want to get this from API if available
+    return 'medium'; // Default priority
+  }
+
+ Map<String, dynamic> toJson() {
+    return {
+      'complaints_id': id,
+      'reference_number': referenceNumber,
+      'citizen_id': citizenId,
+      'entity_id': entityId,
+      'complaint_type': complaintType,
+      'location': location,
+      'description': description,
+      'status': status,
+      'completed_at': completedAt?.toIso8601String(),
+      'locked': locked,
+      'locked_by_employee_id': lockedByEmployeeId,
+      'locked_at': lockedAt?.toIso8601String(),
+      'created_at': createdAt.toIso8601String(),
+      'updated_at': updatedAt.toIso8601String(),
+    };
   }
 }
