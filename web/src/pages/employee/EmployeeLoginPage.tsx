@@ -15,6 +15,11 @@ import {
 } from "../../components/ui/form";
 import { Input } from "../../components/ui/input";
 import LogoCircle from "/assets/logosyr3@3x 1.svg";
+import { LoaderIcon } from "lucide-react";
+import toast from "react-hot-toast";
+
+import { useEffect } from "react";
+import { useEmployeeAuthStore } from "../../app/store/employee/employeeAuth.store";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address." }),
@@ -32,12 +37,46 @@ export default function AdminLoginPage() {
 
   const navigate = useNavigate();
 
+  // Get state and actions from store
+  const { isAuthenticated, isLoading, employee, error, login, clearError } =
+    useEmployeeAuthStore();
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/employee-dashboard");
+    }
+  }, [isAuthenticated, navigate]);
+
+  // Clear error when form changes
+  useEffect(() => {
+    const subscription = form.watch(() => {
+      if (error) {
+        clearError();
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [form, error, clearError]);
+
+  // Handle form submission
   async function onSubmit(values: { email: string; password: string }) {
     try {
-      navigate("/employee-dashboard");
-      console.log("Login submitted", { values });
-    } catch (error) {
-      console.log(error);
+      await login(values.email, values.password);
+
+      // Success handling - navigation will be triggered by useEffect
+      toast.success("Login successful! Redirecting...");
+      console.log("Login successful", { employee });
+    } catch (error: any) {
+      console.error("Login error:", error);
+
+      // Show error message in toast
+      toast.error(error || "Login failed. Please check your credentials.");
+
+      // Optionally, set form error
+      form.setError("root", {
+        type: "manual",
+        message: error || "Login failed",
+      });
     }
   }
 
@@ -47,7 +86,7 @@ export default function AdminLoginPage() {
         <div className="w-full max-w-[450px]">
           <div className="text-center mb-6">
             <div className="flex justify-center">
-              <img src={LogoCircle} className="w-24 h-24" />
+              <img src={LogoCircle} className="w-24 h-24" alt="Logo" />
             </div>
             <h1 className="text-2xl md:text-3xl font-semibold mb-2 tracking-wide">
               Employee Portal
@@ -63,6 +102,15 @@ export default function AdminLoginPage() {
                   onSubmit={form.handleSubmit(onSubmit)}
                   className="space-y-5"
                 >
+                  {/* Show error message if exists */}
+                  {error && (
+                    <div className="p-3 bg-red-50 border border-red-200 rounded-md">
+                      <p className="text-red-600 text-sm text-center">
+                        {error}
+                      </p>
+                    </div>
+                  )}
+
                   {/* Email Field */}
                   <FormField
                     control={form.control}
@@ -77,12 +125,14 @@ export default function AdminLoginPage() {
                             placeholder="employee@health.gov.sy"
                             className="text-left border bg-gray-50 border-gray-300 text-sm py-3 hover:border-gray-500 focus:ring-1! focus:ring-gray-500!"
                             {...field}
+                            disabled={isLoading}
                           />
                         </FormControl>
                         <FormMessage className="text-xs text-red-500" />
                       </FormItem>
                     )}
                   />
+
                   {/* Password Field */}
                   <FormField
                     control={form.control}
@@ -98,17 +148,27 @@ export default function AdminLoginPage() {
                             placeholder="••••••••"
                             className="text-left border bg-gray-50 border-gray-300 text-sm py-3 hover:border-gray-500 focus:ring-1! focus:ring-gray-500!"
                             {...field}
+                            disabled={isLoading}
                           />
                         </FormControl>
                         <FormMessage className="text-xs text-red-500" />
                       </FormItem>
                     )}
                   />
+
                   <Button
                     type="submit"
-                    className="w-full  text-white font-medium py-5 text-base"
+                    className="w-full text-white font-medium py-5 text-base"
+                    disabled={isLoading}
                   >
-                    Sign In
+                    {isLoading ? (
+                      <>
+                        <LoaderIcon className="w-5 h-5 animate-spin mr-2" />
+                        Signing In...
+                      </>
+                    ) : (
+                      "Sign In"
+                    )}
                   </Button>
                 </form>
               </Form>

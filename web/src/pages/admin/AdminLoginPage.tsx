@@ -2,7 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { LoaderIcon } from "react-hot-toast";
 import * as z from "zod";
-import { useAuthAdminStore } from "../../app/store/adminAuth.store";
+
 import Footer from "../../components/Footer";
 import { Button } from "../../components/ui/button";
 import { Card, CardContent } from "../../components/ui/card";
@@ -16,6 +16,7 @@ import {
 } from "../../components/ui/form";
 import { Input } from "../../components/ui/input";
 import LogoCircle from "/assets/logosyr3@3x 1.svg";
+import { useAdminAuthStore } from "../../app/store/admin/adminAuth.store";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address." }),
@@ -31,14 +32,13 @@ export default function AdminLoginPage() {
     },
   });
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  //@ts-ignore
-  const { signIn, isSigningIn, authAdmin } = useAuthAdminStore();
+  const { login, isLoading, admin } = useAdminAuthStore();
+  console.log(isLoading);
 
-  console.log(authAdmin);
+  console.log(admin);
 
-  function onSubmit(values: { email: string; password: string }) {
-    signIn(values);
+  async function onSubmit(values: { email: string; password: string }) {
+    await login(values.email, values.password);
   }
 
   return (
@@ -106,10 +106,10 @@ export default function AdminLoginPage() {
                   />
                   <Button
                     type="submit"
-                    disabled={isSigningIn}
+                    disabled={isLoading}
                     className="w-full bg-primary hover:bg-hover text-white font-medium py-5 text-base"
                   >
-                    {isSigningIn ? (
+                    {isLoading ? (
                       <LoaderIcon className="w-full h-5 animate-spin text-center" />
                     ) : (
                       "Sign In"

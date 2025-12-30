@@ -1,5 +1,4 @@
-// routes/AppRoutes.tsx
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import AdminLoginPage from "../pages/admin/AdminLoginPage";
 
 import AdminLayout from "../components/layout/adminLayout/AdminLayout";
@@ -17,13 +16,11 @@ import AdminLogsPage from "../pages/admin/AdminLogsPage";
 import AdminSecurityPage from "../pages/admin/AdminSecurityPage";
 import AdminPerformancePage from "../pages/admin/AdminPerformancePage";
 import AdminBackupPage from "../pages/admin/AdminBackupPage";
-import { useAuthAdminStore } from "../app/store/adminAuth.store";
+
+import EmployeeProtectedRoute from "../components/employee/EmployeeProtectedRoute";
+import AdminProtectedRoute from "../components/admin/AdminProtectedRoute";
 
 function AppRoutes() {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  //@ts-ignore
-  const { authAdmin } = useAuthAdminStore();
-
   return (
     <Routes>
       <Route path="/" element={<IntroPage />} />
@@ -32,13 +29,19 @@ function AppRoutes() {
       <Route
         path="/admin-login"
         element={
-          !authAdmin ? <AdminLoginPage /> : <Navigate to={"/admin-dashboard"} />
+          <AdminProtectedRoute requireAuth={false}>
+            <AdminLoginPage />
+          </AdminProtectedRoute>
         }
       />
 
       <Route
         path="/admin-dashboard"
-        element={authAdmin ? <AdminLayout /> : <Navigate to={"/admin-login"} />}
+        element={
+          <AdminProtectedRoute>
+            <AdminLayout />
+          </AdminProtectedRoute>
+        }
       >
         <Route index element={<AdminOverviewPage />} />
         <Route path="overview" element={<AdminOverviewPage />} />
@@ -52,8 +55,22 @@ function AppRoutes() {
         <Route path="backup" element={<AdminBackupPage />} />
       </Route>
 
-      <Route path="/employee-login" element={<EmployeeLoginPage />} />
-      <Route path="/employee-dashboard" element={<EmployeeDashboard />} />
+      <Route
+        path="/employee-login"
+        element={
+          <EmployeeProtectedRoute requireAuth={false}>
+            <EmployeeLoginPage />
+          </EmployeeProtectedRoute>
+        }
+      />
+      <Route
+        path="/employee-dashboard"
+        element={
+          <EmployeeProtectedRoute>
+            <EmployeeDashboard />
+          </EmployeeProtectedRoute>
+        }
+      />
     </Routes>
   );
 }

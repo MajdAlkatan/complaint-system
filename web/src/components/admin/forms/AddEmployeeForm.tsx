@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { useState, useEffect } from "react";
 import { Button } from "../../../components/ui/button";
 import {
@@ -19,29 +18,30 @@ import {
 } from "../../../components/ui/select";
 import { Checkbox } from "../../../components/ui/checkbox";
 import toast, { LoaderIcon } from "react-hot-toast";
-import { addEmployee, getGovernmentEntity } from "../../../lib/adminAction";
 
-// Update interface to match API response
-interface GovernmentEntity {
-  government_entities_id: number;
-  name: string;
-  description: string;
-  contact_email: string;
-  contact_phone: string;
-  created_at?: string;
-}
+import type { GovernmentEntity } from "../../../app/store/admin/governmentEntityStore";
+import {
+  useEmployeeStore,
+  type AddEmployeeData,
+} from "../../../app/store/admin/employeeStore";
 
 interface AddEmployeeFormProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onEmployeeAdded?: () => void;
+  governmentEntities: GovernmentEntity[];
 }
 
-const AddEmployeeForm = ({ open, onOpenChange, onEmployeeAdded }: AddEmployeeFormProps) => {
-  const [isAddingEmployee, setIsAddingEmployee] = useState(false);
-  const [governmentEntities, setGovernmentEntities] = useState<GovernmentEntity[]>([]);
-  const [loadingEntities, setLoadingEntities] = useState(false);
-  const [formData, setFormData] = useState({
+const AddEmployeeForm = ({
+  open,
+  onOpenChange,
+  onEmployeeAdded,
+  governmentEntities,
+}: AddEmployeeFormProps) => {
+  // Use Zustand store
+  const { addEmployee, isAddingEmployee } = useEmployeeStore();
+
+  const [formData, setFormData] = useState<AddEmployeeData>({
     username: "",
     email: "",
     password: "",
@@ -55,65 +55,18 @@ const AddEmployeeForm = ({ open, onOpenChange, onEmployeeAdded }: AddEmployeeFor
     can_export_data: 0,
   });
 
-  // Fetch government entities when dialog opens
-  useEffect(() => {
-    const fetchGovernmentEntities = async () => {
-      if (open) {
-        try {
-          setLoadingEntities(true);
-          const response = await getGovernmentEntity();
-
-          console.log("Government entities response:", response); // Debug log
-
-          let entities: GovernmentEntity[] = [];
-          
-          if (response && response.data && Array.isArray(response.data)) {
-            entities = response.data.map(item => ({
-              government_entities_id: Number(item.government_entities_id),
-              name: item.name || "",
-              description: item.description || "",
-              contact_email: item.contact_email || "",
-              contact_phone: item.contact_phone || "",
-              created_at: item.created_at
-            }));
-          } else {
-            console.warn("Unexpected response format:", response);
-            toast.error("Unexpected data format received");
-          }
-
-          console.log("Processed entities:", entities); // Debug log
-
-          setGovernmentEntities(entities);
-
-          // Set default government entity if available
-          if (entities.length > 0 && formData.government_entity_id === 0) {
-            setFormData(prev => ({
-              ...prev,
-              government_entities_id: entities[0].government_entities_id
-            }));
-          }
-        } catch (error) {
-          console.error("Failed to load government entities:", error);
-          toast.error("Failed to load departments");
-        } finally {
-          setLoadingEntities(false);
-        }
-      }
-    };
-
-    fetchGovernmentEntities();
-  }, [open]);
-
   // Reset form when dialog opens/closes
   useEffect(() => {
     if (!open) {
-      // Reset form when dialog closes
       setFormData({
         username: "",
         email: "",
         password: "",
         password_confirmation: "",
-        government_entity_id: governmentEntities.length > 0 ? governmentEntities[0].government_entities_id : 0,
+        government_entity_id:
+          governmentEntities.length > 0
+            ? governmentEntities[0].government_entities_id
+            : 0,
         position: "",
         can_add_notes_on_complaints: 0,
         can_request_more_info_on_complaints: 0,
@@ -144,29 +97,15 @@ const AddEmployeeForm = ({ open, onOpenChange, onEmployeeAdded }: AddEmployeeFor
       toast.error("Password must be at least 6 characters long");
       return;
     }
-    try {
-      setIsAddingEmployee(true);
-      const response = await addEmployee(formData);
-      
-      //@ts-ignore
-      if (response && response.status === 200) {
-        toast.success("Employee added successfully!");
-        
-        // Call the callback to refresh the employee list
-        if (onEmployeeAdded) {
-          onEmployeeAdded();
-        }
-        
-        onOpenChange(false);
-      } else {
-        //@ts-ignore
-        toast.error(response?.message || "Failed to add employee");
+
+    const success = await addEmployee(formData);
+
+    if (success) {
+      // Call the callback to refresh the employee list
+      if (onEmployeeAdded) {
+        onEmployeeAdded();
       }
-    } catch (error) {
-      console.error("Error adding employee:", error);
-      toast.error("Failed to add employee. Please try again.");
-    } finally {
-      setIsAddingEmployee(false);
+      onOpenChange(false);
     }
   };
 
@@ -192,7 +131,8 @@ const AddEmployeeForm = ({ open, onOpenChange, onEmployeeAdded }: AddEmployeeFor
             Add New Employee
           </DialogTitle>
           <DialogDescription className="sr-only">
-            Form to add a new employee with username, email, password, department, position and permissions
+            Form to add a new employee with username, email, password,
+            department, position and permissions
           </DialogDescription>
         </DialogHeader>
 
@@ -267,32 +207,33 @@ const AddEmployeeForm = ({ open, onOpenChange, onEmployeeAdded }: AddEmployeeFor
           {/* Government Entity and Position Row */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="government_entities_id">Government Entity</Label>
+              <Label htmlFor="government_entity_id">Government Entity</Label>
               <Select
-                value={formData.government_entity_id ? formData.government_entity_id.toString() : ""}
+                value={
+                  formData.government_entity_id
+                    ? formData.government_entity_id.toString()
+                    : ""
+                }
                 onValueChange={(value) =>
                   setFormData({
                     ...formData,
                     government_entity_id: parseInt(value),
                   })
                 }
-                disabled={loadingEntities || governmentEntities.length === 0}
               >
                 <SelectTrigger className="focus:ring-0! focus:border-2! focus:border-emerald-500! focus:shadow-lg!">
                   <SelectValue
                     placeholder={
-                      loadingEntities
-                        ? "Loading departments..."
-                        : governmentEntities.length === 0
-                          ? "No departments available"
-                          : "Select government entity"
+                      governmentEntities.length === 0
+                        ? "No departments available"
+                        : "Select government entity"
                     }
                   />
                 </SelectTrigger>
                 <SelectContent className="focus:ring-0! focus:border-2! focus:border-emerald-500! focus:shadow-lg!">
                   {governmentEntities.map((entity) => (
-                    <SelectItem 
-                      key={entity.government_entities_id} 
+                    <SelectItem
+                      key={entity.government_entities_id}
                       value={entity.government_entities_id.toString()}
                     >
                       {entity.name}
@@ -300,7 +241,7 @@ const AddEmployeeForm = ({ open, onOpenChange, onEmployeeAdded }: AddEmployeeFor
                   ))}
                 </SelectContent>
               </Select>
-              {governmentEntities.length === 0 && !loadingEntities && (
+              {governmentEntities.length === 0 && (
                 <p className="text-xs text-amber-600">
                   No departments found. Please add departments first.
                 </p>
