@@ -5,7 +5,7 @@ use App\Interfaces\IComplaintRepo;
 use App\Interfaces\IComplaintTypeRepo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Broadcast;
-use MyEvent;
+use App\Events\MyEvent;
 use Pusher\Pusher;
 
 class ComplaintController extends Controller

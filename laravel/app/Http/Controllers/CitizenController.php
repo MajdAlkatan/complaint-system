@@ -39,7 +39,7 @@ class CitizenController extends Controller
     }
 
     public function update($id , Request $request){
-        $this->citizenRepo->update($id,$validated);
+        $this->citizenRepo->update($id,$request->all());
         return response()->json(['message' => 'The data has been updated succesfully ']);
     }
 
@@ -79,7 +79,7 @@ class CitizenController extends Controller
             'access_token' => $token,
             'refresh_token' => $refreshToken,
             'token_type' => 'bearer',
-            //'expires_in' => JWTAuth::factory()->getTTL() * 60
+            'user' => $user,
         ]);
     }
 

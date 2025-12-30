@@ -47,7 +47,7 @@ class AdminController extends Controller
             'access_token' => $token,
             'refresh_token' => $refreshToken,
             'token_type' => 'bearer',
-            //'expires_in' => JWTAuth::factory()->getTTL() * 60
+            'user' => $user,
         ]);
     }
     protected function createRefreshToken($user)
