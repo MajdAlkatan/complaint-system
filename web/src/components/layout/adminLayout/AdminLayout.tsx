@@ -76,11 +76,13 @@ import { Bell, LogOut, Search, User, X } from "lucide-react";
 import { useState } from "react";
 import { Outlet } from "react-router-dom";
 import AdminHeader from "../adminHeader/AdminHeader";
+import { Button } from "../../ui/button";
+import { useAdminAuthStore } from "../../../app/store/admin/adminAuth.store";
 
 const AdminLayout = () => {
   const [searchValue, setSearchValue] = useState("");
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
-
+  const { logout } = useAdminAuthStore();
   return (
     <>
       <div className="sticky top-0 z-20 bg-white">
@@ -135,15 +137,15 @@ const AdminLayout = () => {
 
             {/* Actions - Responsive sizing */}
             <div className="flex items-center space-x-1 md:space-x-2">
-              <button className="p-1.5 md:p-2 hover:bg-gray-100 rounded-lg transition-colors">
+              <Button variant="outline">
                 <Bell className="w-4 h-4 md:w-5 md:h-5 text-gray-700" />
-              </button>
-              <button className="p-1.5 md:p-2 hover:bg-gray-100 rounded-lg transition-colors hidden sm:block">
+              </Button>
+              <Button variant={"outline"}>
                 <User className="w-4 h-4 md:w-5 md:h-5 text-gray-700" />
-              </button>
-              <button className="p-1.5 md:p-2 hover:bg-gray-100 rounded-lg transition-colors">
+              </Button>
+              <Button variant={"outline"} onClick={logout}>
                 <LogOut className="w-4 h-4 md:w-5 md:h-5 text-gray-700" />
-              </button>
+              </Button>
             </div>
           </div>
         </header>
