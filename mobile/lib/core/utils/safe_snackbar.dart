@@ -1,3 +1,4 @@
+// utils/safe_snackbar.dart
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -8,10 +9,9 @@ class SafeSnackbar {
     bool isError = false,
     Duration duration = const Duration(seconds: 3),
   }) {
-    // Check if we're in a valid context
-    if (!Get.isSnackbarOpen) {
-      // Use post-frame callback to ensure safe context
-      WidgetsBinding.instance?.addPostFrameCallback((_) {
+    // Use post-frame callback to ensure we have a valid context
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
+      if (!Get.isSnackbarOpen) {
         Get.snackbar(
           title,
           message,
@@ -21,9 +21,10 @@ class SafeSnackbar {
           colorText: Colors.white,
           margin: EdgeInsets.all(16),
           borderRadius: 8,
+          icon: Icon(isError ? Icons.error : Icons.check_circle, color: Colors.white),
         );
-      });
-    }
+      }
+    });
   }
 
   static void showError(String message) {

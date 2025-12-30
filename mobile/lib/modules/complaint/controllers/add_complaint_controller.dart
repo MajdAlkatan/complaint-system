@@ -1,3 +1,4 @@
+// add_complaint_controller.dart
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -10,63 +11,41 @@ import '../../../../core/utils/validators.dart';
 class AddComplaintController extends GetxController {
   final ComplaintRepository _complaintRepository = Get.find();
   
-  // Form fields
-  var title = ''.obs;
-  var complaintType = ''.obs;
+  // Form fields - Updated to match API requirements
+  var entityId = '1'.obs; // Default to 1 as per your API
+  var complaintType = '1'.obs; // Default to 1 as per your API
   var location = ''.obs;
-  var governmentEntity = ''.obs;
   var description = ''.obs;
   var isLoading = false.obs;
   var selectedFiles = <PlatformFile>[].obs;
   
-  // Dropdown options
+  // Dropdown options for complaint types
   final complaintTypes = [
-    'Infrastructure',
-    'Public Services',
-    'Environmental',
-    'Health & Safety',
-    'Administrative',
-    'Other'
-  ];
-  
-  final governmentEntities = [
-    'Ministry of Public Works',
-    'Ministry of Health',
-    'Ministry of Education',
-    'Ministry of Transportation',
-    'Municipality',
-    'Public Services Commission',
-    'Environmental Protection Agency'
+    {'id': '1', 'name': 'Water Supply'},
+    {'id': '2', 'name': 'Electricity'},
+    {'id': '3', 'name': 'Sanitation'},
+    {'id': '4', 'name': 'Road Maintenance'},
+    {'id': '5', 'name': 'Building Issues'},
+    {'id': '6', 'name': 'Other'},
   ];
   
   // Form field setters
-  void setTitle(String value) => title.value = value;
   void setComplaintType(String value) => complaintType.value = value;
   void setLocation(String value) => location.value = value;
-  void setGovernmentEntity(String value) => governmentEntity.value = value;
   void setDescription(String value) => description.value = value;
   
   // Validators
-  String? validateTitle(String? value) => Validators.validateRequired(value, 'Complaint Title');
-  String? validateComplaintType(String? value) => Validators.validateRequired(value, 'Complaint Type');
   String? validateLocation(String? value) => Validators.validateRequired(value, 'Location');
-  String? validateGovernmentEntity(String? value) => Validators.validateRequired(value, 'Government Entity');
   
   String? validateDescription(String? value) {
     if (value == null || value.isEmpty) {
       return 'Description is required';
     }
-    if (value.length > 250) {
-      return 'Description must be 250 characters or less';
-    }
     return null;
   }
   
   bool get isFormValid =>
-      validateTitle(title.value) == null &&
-      validateComplaintType(complaintType.value) == null &&
       validateLocation(location.value) == null &&
-      validateGovernmentEntity(governmentEntity.value) == null &&
       validateDescription(description.value) == null;
   
   // Location methods
@@ -84,8 +63,8 @@ class AddComplaintController extends GetxController {
           desiredAccuracy: LocationAccuracy.high,
         );
         
-        // Convert coordinates to address (you might want to use a geocoding service)
-        location.value = '${position.latitude}, ${position.longitude}';
+        // Get address from coordinates (simplified - you might want to use geocoding)
+        location.value = 'Lat: ${position.latitude}, Lng: ${position.longitude}';
         Get.snackbar('Success', 'Location obtained successfully');
       } else {
         Get.snackbar('Error', 'Location permission denied');
@@ -95,30 +74,6 @@ class AddComplaintController extends GetxController {
     } finally {
       isLoading.value = false;
     }
-  }
-  
-  void openMapForLocation() {
-    // This would open a map screen for location selection
-    // For now, we'll simulate it with a dialog
-    Get.dialog(
-      AlertDialog(
-        title: Text('Select Location'),
-        content: Text('Map integration would go here. For demo, enter location manually.'),
-        actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () {
-              Get.back();
-              location.value = 'Selected from map';
-            },
-            child: Text('Confirm'),
-          ),
-        ],
-      ),
-    );
   }
   
   // File attachment methods
@@ -153,42 +108,58 @@ class AddComplaintController extends GetxController {
     }
   }
   
-  // Submit complaint
+  // Submit complaint - Updated to match API requirements
   Future<void> submitComplaint() async {
     if (!isFormValid) return;
     
     try {
       isLoading.value = true;
+      
+      // Prepare complaint data according to API requirements
       final complaintData = {
-        'title': title.value,
-        'complaintType': complaintType.value,
+        'entity_id': int.parse(entityId.value),
+        'complaint_type': int.parse(complaintType.value),
         'location': location.value,
-        'governmentEntity': governmentEntity.value,
         'description': description.value,
-        'attachments': selectedFiles.map((file) => file.name).toList(),
       };
+      
+      print('Submitting complaint: $complaintData');
       
       final response = await _complaintRepository.createComplaint(complaintData);
       
       if (response.success) {
         Get.back();
-        Get.snackbar('Success', 'Complaint submitted successfully');
+        Get.snackbar(
+          'Success',
+          'Complaint submitted successfully!',
+          snackPosition: SnackPosition.BOTTOM,
+          duration: Duration(seconds: 3),
+        );
         clearForm();
       } else {
-        Get.snackbar('Error', response.message);
+        Get.snackbar(
+          'Error',
+          response.message,
+          snackPosition: SnackPosition.BOTTOM,
+          duration: Duration(seconds: 4),
+        );
       }
     } catch (e) {
-      Get.snackbar('Error', 'Failed to submit complaint: $e');
+      print('Error submitting complaint: $e');
+      Get.snackbar(
+        'Error',
+        'Failed to submit complaint: ${e.toString()}',
+        snackPosition: SnackPosition.BOTTOM,
+        duration: Duration(seconds: 4),
+      );
     } finally {
       isLoading.value = false;
     }
   }
   
   void clearForm() {
-    title.value = '';
-    complaintType.value = '';
+    complaintType.value = '1';
     location.value = '';
-    governmentEntity.value = '';
     description.value = '';
     selectedFiles.clear();
   }

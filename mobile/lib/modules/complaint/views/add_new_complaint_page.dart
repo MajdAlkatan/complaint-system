@@ -23,15 +23,6 @@ class AddNewComplaintPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Complaint Title
-              CustomTextField(
-                label: 'Complaint Title *',
-                hintText: 'Enter complaint title',
-                validator: controller.validateTitle,
-                onChanged: controller.setTitle,
-              ),
-              SizedBox(height: 20),
-              
               // Complaint Type Dropdown
               Text(
                 'Complaint Type *',
@@ -42,11 +33,11 @@ class AddNewComplaintPage extends StatelessWidget {
               ),
               SizedBox(height: 8),
               Obx(() => DropdownButtonFormField<String>(
-                value: controller.complaintType.value.isEmpty ? null : controller.complaintType.value,
+                value: controller.complaintType.value,
                 items: controller.complaintTypes.map((type) {
                   return DropdownMenuItem(
-                    value: type,
-                    child: Text(type),
+                    value: type['id'],
+                    child: Text(type['name']!),
                   );
                 }).toList(),
                 onChanged: (value) => controller.setComplaintType(value!),
@@ -56,7 +47,12 @@ class AddNewComplaintPage extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                validator: controller.validateComplaintType,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please select a complaint type';
+                  }
+                  return null;
+                },
               )),
               SizedBox(height: 20),
               
@@ -76,7 +72,7 @@ class AddNewComplaintPage extends StatelessWidget {
                       onChanged: controller.setLocation,
                       validator: controller.validateLocation,
                       decoration: InputDecoration(
-                        hintText: 'Enter location or select from map',
+                        hintText: 'Enter location',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -109,97 +105,41 @@ class AddNewComplaintPage extends StatelessWidget {
                       ),
                     ],
                   ),
-                  SizedBox(width: 8),
-                  Column(
-                    children: [
-                      // Map Location Button
-                      Container(
-                        width: 48,
-                        height: 48,
-                        child: IconButton(
-                          onPressed: controller.openMapForLocation,
-                          icon: Icon(Icons.map, color: AppColors.primary),
-                          style: IconButton.styleFrom(
-                            backgroundColor: AppColors.primary.withOpacity(0.1),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              side: BorderSide(color: AppColors.primary),
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 4),
-                      Text(
-                        'Map',
-                        style: TextStyle(fontSize: 10, color: AppColors.textSecondary),
-                      ),
-                    ],
-                  ),
                 ],
               ),
               SizedBox(height: 20),
               
-              // Government Entity Dropdown
-              Text(
-                'Government Entity *',
-                style: TextStyle(
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.textPrimary,
-                ),
-              ),
-              SizedBox(height: 8),
-              Obx(() => DropdownButtonFormField<String>(
-                value: controller.governmentEntity.value.isEmpty ? null : controller.governmentEntity.value,
-                items: controller.governmentEntities.map((entity) {
-                  return DropdownMenuItem(
-                    value: entity,
-                    child: Text(entity),
-                  );
-                }).toList(),
-                onChanged: (value) => controller.setGovernmentEntity(value!),
-                decoration: InputDecoration(
-                  hintText: 'Select government entity',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                validator: controller.validateGovernmentEntity,
-              )),
-              SizedBox(height: 20),
-              
-              // Description with character counter
+              // Description
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   CustomTextField(
                     label: 'Description *',
-                    hintText: 'Enter detailed description (max 250 characters)',
+                    hintText: 'Enter detailed description of your complaint',
                     validator: controller.validateDescription,
                     onChanged: controller.setDescription,
-                    maxLines: 4,
+                    maxLines: 5,
                   ),
                   SizedBox(height: 4),
                   Obx(() => Text(
-                    '${controller.description.value.length}/250 characters',
+                    '${controller.description.value.length} characters',
                     style: TextStyle(
                       fontSize: 12,
-                      color: controller.description.value.length > 250 
-                          ? AppColors.error 
-                          : AppColors.textSecondary,
+                      color: AppColors.textSecondary,
                     ),
                   )),
                 ],
               ),
               SizedBox(height: 20),
               
-              // Attachment Section
+              // Attachment Section (Optional)
               _buildAttachmentSection(),
               SizedBox(height: 30),
               
-              // Submit Button
+              // Submit Button - FIXED: Remove .value from isFormValid
               Obx(() => CustomButton(
                 text: 'Submit Complaint',
-                onPressed: controller.isFormValid.value && !controller.isLoading.value
+                onPressed: controller.isFormValid && !controller.isLoading.value
                     ? () {
                         if (_formKey.currentState!.validate()) {
                           controller.submitComplaint();
@@ -220,7 +160,7 @@ class AddNewComplaintPage extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Attachment',
+          'Attachment (Optional)',
           style: TextStyle(
             fontWeight: FontWeight.w500,
             color: AppColors.textPrimary,
@@ -258,7 +198,7 @@ class AddNewComplaintPage extends StatelessWidget {
               CustomButton(
                 text: 'Choose File',
                 onPressed: controller.pickFiles,
-                backgroundColor: AppColors.primary,
+                backgroundColor: AppColors.primary.withOpacity(0.8),
                 isEnabled: true,
               ),
               SizedBox(height: 8),
@@ -273,7 +213,7 @@ class AddNewComplaintPage extends StatelessWidget {
           ),
         ),
         
-        // Selected files list - Only wrap the dynamic part in Obx
+        // Selected files list
         Obx(() {
           if (controller.selectedFiles.isEmpty) {
             return SizedBox();
@@ -373,8 +313,3 @@ class AddNewComplaintPage extends StatelessWidget {
     }
   }
 }
-
-extension on bool {
-  bool get value => true;
-}
-

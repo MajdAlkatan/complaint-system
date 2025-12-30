@@ -18,28 +18,28 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::post('admins/register', [AdminController::class, 'register'])
-->middleware('LogUserActivity');
+    ->middleware('LogUserActivity');
 
 Route::post('admins/login', [AdminController::class, 'login'])
-->middleware('LogUserActivity');
+    ->middleware('LogUserActivity');
 
 
 Route::post('employees/add', [EmployeeController::class, 'store'])
-->middleware(['LogUserActivity' , 'admin' ]);
+    ->middleware(['LogUserActivity', 'admin']);
 
 
 
 Route::post('admins/login', [AdminController::class, 'login'])
-->middleware('LogUserActivity');
+    ->middleware('LogUserActivity');
 
 Route::post('admins/refresh', [AdminController::class, 'refresh']);
 
 
 Route::post('citizens/register', [CitizenController::class, 'register'])
-->middleware('LogUserActivity');
+    ->middleware('LogUserActivity');
 
 Route::post('activities', [ActivityController::class, 'index'])
-->middleware('LogUserActivity');
+    ->middleware('LogUserActivity');
 
 
 Route::post('citizens/login', [CitizenController::class, 'login'])
@@ -61,11 +61,11 @@ Route::get('me', [AuthController::class, 'me'])
 *************
 */
 Route::get('attachments', [AttachmentController::class, 'index']);
-    //->middleware('auth:api');
+//->middleware('auth:api');
 Route::get('attachments/{id}', [AttachmentController::class, 'getById']);
-    //->middleware('auth:api');
+//->middleware('auth:api');
 Route::post('attachments', [AttachmentController::class, 'store']);
-    //->middleware('auth:api');
+//->middleware('auth:api');
 Route::get('attachments/byComplaint/{id}', [AttachmentController::class, 'GetByComplaintId']);
 
 Route::delete('attachments/{id}', [AttachmentController::class, 'delete'])
@@ -73,7 +73,7 @@ Route::delete('attachments/{id}', [AttachmentController::class, 'delete'])
 Route::put('attachments/{id}', [AttachmentController::class, 'update'])
     ->middleware('auth:api');
 
-    
+
 /*
 *************
 *Citizen*
@@ -84,15 +84,15 @@ Route::get('citizen', [CitizenController::class, 'index'])
 Route::get('citizen/{id}', [CitizenController::class, 'getById'])
     ->middleware('auth:api');
 Route::post('citizen', [CitizenController::class, 'store']);
-    //->middleware('auth:api');
+//->middleware('auth:api');
 Route::post('citizens/refresh', [CitizenController::class, 'refresh']);
-    //->middleware('auth:api');
+//->middleware('auth:api');
 Route::delete('citizen/{id}', action: [CitizenController::class, 'delete'])
     ->middleware('auth:api');
 Route::put('citizen/{id}', [CitizenController::class, 'update'])
     ->middleware('auth:api');
 
-    
+
 /*
 *************
 *Complaint*
@@ -112,6 +112,12 @@ Route::post('complaints', [ComplaintController::class, 'store'])
     ->middleware(middleware: 'citizen');
 Route::post('complaints/addType', [ComplaintController::class, 'storeType'])
     ->middleware(middleware: 'admin');
+
+Route::get('Alltypes', [ComplaintController::class, 'getAllTypes']);
+
+
+    
+
 Route::delete('complaints/{id}', action: [ComplaintController::class, 'delete'])
     ->middleware('citizen');
 Route::put('complaints/Mycomplaints/{id}', [ComplaintController::class, 'updateMyComplaint'])
@@ -129,7 +135,7 @@ Route::put('complaints/{id}', [ComplaintController::class, 'update'])
 
 
 
-        
+
 /*
 *************
 *Employee*
@@ -140,14 +146,14 @@ Route::get('employees', [EmployeeController::class, 'index'])
 Route::get('employees/{id}', [EmployeeController::class, 'getById'])
     ->middleware('admin');
 //Route::post('employees', [EmployeeController::class, 'store'])
-  //  ->middleware(middleware: 'admin');
+//  ->middleware(middleware: 'admin');
 Route::post('employees/login', [EmployeeController::class, 'login']);
 Route::post('employees/refresh', [EmployeeController::class, 'refresh']);
 Route::delete('employees/{id}', action: [EmployeeController::class, 'delete'])
     ->middleware('admin');
 Route::post('employees/{id}/edit', [EmployeeController::class, 'update'])
-->middleware(['LogUserActivity' , 'admin' ]);
-        
+    ->middleware(['LogUserActivity', 'admin']);
+
 /*
 *************
 *GovernmentEntity*
@@ -158,7 +164,7 @@ Route::get('governmentEntites', [GovernmentEntityController::class, 'index'])
 Route::get('governmentEntites/{id}', [GovernmentEntityController::class, 'getById'])
     ->middleware('admin');
 Route::post('governmentEntites', [GovernmentEntityController::class, 'store'])
-    ->middleware(middleware: [/*'auth:api' ,*/ 'admin']);
+    ->middleware(middleware: [/*'auth:api' ,*/'admin']);
 Route::delete('governmentEntites/{id}', action: [GovernmentEntityController::class, 'delete'])
     ->middleware('admin');
 Route::put('governmentEntites/{id}', [GovernmentEntityController::class, 'update'])

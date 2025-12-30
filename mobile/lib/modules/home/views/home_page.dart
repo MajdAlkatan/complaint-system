@@ -310,6 +310,7 @@ class HomePage extends GetView<HomeController> {
   }
 }
 
+// In your HomePage file, update the ComplaintCard class:
 class ComplaintCard extends GetView<HomeController> {
   final Complaint complaint;
 
@@ -317,155 +318,152 @@ class ComplaintCard extends GetView<HomeController> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.only(bottom: 12),
-      child: Material(
-        elevation: 2,
-        borderRadius: BorderRadius.circular(12),
-        child: Container(
-          width: double.infinity,
-          padding: EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Header with ID and Status
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'CMP-${complaint.createdAt.year}-${complaint.id.padLeft(6, '0')}',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.textPrimary,
+    return GestureDetector(
+      onTap: () => controller.navigateToComplaintDetails(complaint),
+      child: Container(
+        margin: EdgeInsets.only(bottom: 12),
+        child: Material(
+          elevation: 2,
+          borderRadius: BorderRadius.circular(12),
+          child: Container(
+            width: double.infinity,
+            padding: EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Header with Reference Number and Status
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      complaint.referenceNumber,
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.textPrimary,
+                      ),
                     ),
-                  ),
-                  Row(
-                    children: [
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: _getStatusColor(
-                            complaint.status,
-                          ).withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: _getStatusColor(
-                              complaint.status,
-                            ).withOpacity(0.3),
+                    Row(
+                      children: [
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: _getStatusColor(complaint.status).withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: _getStatusColor(complaint.status).withOpacity(0.3),
+                            ),
+                          ),
+                          child: Text(
+                            _getStatusText(complaint.status),
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              color: _getStatusColor(complaint.status),
+                            ),
                           ),
                         ),
-                        child: Text(
-                          _getStatusText(complaint.status),
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                            color: _getStatusColor(complaint.status),
+                        SizedBox(width: 8),
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
                           ),
-                        ),
-                      ),
-                      SizedBox(width: 8),
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: _getPriorityColor(
+                          decoration: BoxDecoration(
+                            color: _getPriorityColor(complaint.priority).withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: _getPriorityColor(complaint.priority).withOpacity(0.3),
+                            ),
+                          ),
+                          child: Text(
                             complaint.priority,
-                          ).withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: _getPriorityColor(
-                              complaint.priority,
-                            ).withOpacity(0.3),
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              color: _getPriorityColor(complaint.priority),
+                            ),
                           ),
                         ),
-                        child: Text(
-                          complaint.priority,
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                            color: _getPriorityColor(complaint.priority),
-                          ),
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
+                  ],
+                ),
+
+                SizedBox(height: 12),
+
+                // Title
+                Text(
+                  complaint.title,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
                   ),
-                ],
-              ),
-
-              SizedBox(height: 12),
-
-              // Title
-              Text(
-                complaint.title,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
                 ),
-              ),
 
-              SizedBox(height: 8),
+                SizedBox(height: 8),
 
-              // Description
-              Text(
-                complaint.description,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: AppColors.textSecondary,
-                  height: 1.4,
-                ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-
-              SizedBox(height: 12),
-
-              // Footer with location and date
-              Row(
-                children: [
-                  Icon(
-                    Icons.location_on,
-                    size: 14,
+                // Description preview
+                Text(
+                  complaint.description.length > 100
+                      ? '${complaint.description.substring(0, 100)}...'
+                      : complaint.description,
+                  style: TextStyle(
+                    fontSize: 14,
                     color: AppColors.textSecondary,
+                    height: 1.4,
                   ),
-                  SizedBox(width: 4),
-                  Expanded(
-                    child: Text(
-                      'Location: ${_getLocationFromDescription(complaint.description)}',
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+
+                SizedBox(height: 12),
+
+                // Footer with location and date
+                Row(
+                  children: [
+                    Icon(
+                      Icons.location_on,
+                      size: 14,
+                      color: AppColors.textSecondary,
+                    ),
+                    SizedBox(width: 4),
+                    Expanded(
+                      child: Text(
+                        complaint.location,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: AppColors.textSecondary,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    SizedBox(width: 16),
+                    Icon(
+                      Icons.calendar_today,
+                      size: 14,
+                      color: AppColors.textSecondary,
+                    ),
+                    SizedBox(width: 4),
+                    Text(
+                      complaint.createdAt.format('MM/dd/yyyy'),
                       style: TextStyle(
                         fontSize: 12,
                         color: AppColors.textSecondary,
                       ),
-                      overflow: TextOverflow.ellipsis,
                     ),
-                  ),
-                  SizedBox(width: 16),
-                  Icon(
-                    Icons.calendar_today,
-                    size: 14,
-                    color: AppColors.textSecondary,
-                  ),
-                  SizedBox(width: 4),
-                  Text(
-                    'Filed: ${complaint.createdAt.format('MM/dd/yyyy')}',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -480,7 +478,9 @@ class ComplaintCard extends GetView<HomeController> {
         return AppColors.warning;
       case 'rejected':
         return AppColors.error;
-      default: // pending
+      case 'new':
+        return Colors.blue; // Add color for 'new' status
+      default:
         return AppColors.textSecondary;
     }
   }
@@ -500,6 +500,8 @@ class ComplaintCard extends GetView<HomeController> {
 
   String _getStatusText(String status) {
     switch (status) {
+      case 'new':
+        return 'New';
       case 'pending':
         return 'Pending';
       case 'in_progress':
@@ -512,6 +514,7 @@ class ComplaintCard extends GetView<HomeController> {
         return status;
     }
   }
+
 
   String _getLocationFromDescription(String description) {
     if (description.contains('Location:')) {
