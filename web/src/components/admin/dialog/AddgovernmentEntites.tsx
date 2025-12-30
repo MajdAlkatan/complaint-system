@@ -1,11 +1,19 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../../ui/dialog";
+import { Plus } from "lucide-react";
+import { useEffect, useState } from "react";
+import {
+  useGovernmentEntityStore,
+  type AddGovernmentEntityData,
+} from "../../../app/store/admin/governmentEntityStore";
 import { Button } from "../../ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "../../ui/dialog";
 import { Input } from "../../ui/input";
 import { Label } from "../../ui/label";
-import {  Plus } from "lucide-react";
-import { useState } from "react";
 import { Textarea } from "../../ui/textarea";
-import { addGovernmentEntity } from "../../../lib/adminAction";
 
 interface AddGovernmentEntitiesProps {
   name?: string;
@@ -13,8 +21,8 @@ interface AddGovernmentEntitiesProps {
   description?: string;
   contact_phone?: string;
   onEntityAdded?: () => void;
-  open: boolean; // Add this prop
-  onOpenChange: (open: boolean) => void; // Add this prop
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 }
 
 function AddGovernmentEntities({
@@ -24,28 +32,52 @@ function AddGovernmentEntities({
   contact_phone = "",
   onEntityAdded,
   open,
-  onOpenChange
+  onOpenChange,
 }: AddGovernmentEntitiesProps) {
-  const [formData, setFormData] = useState({
+  // Use Zustand store
+  const { addGovernmentEntity, isAddingEntity } = useGovernmentEntityStore();
+
+  const [formData, setFormData] = useState<AddGovernmentEntityData>({
     name: name,
     contact_email: contact_email,
     description: description,
-    contact_phone: contact_phone
+    contact_phone: contact_phone,
   });
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  // Reset form when dialog opens/closes
+  useEffect(() => {
+    if (!open) {
+      setFormData({
+        name: "",
+        contact_email: "",
+        description: "",
+        contact_phone: "",
+      });
+      setError(null);
+    } else {
+      // If editing, use the provided values
+      setFormData({
+        name: name,
+        contact_email: contact_email,
+        description: description,
+        contact_phone: contact_phone,
+      });
+    }
+  }, [open, name, contact_email, description, contact_phone]);
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
     setError(null);
 
     try {
@@ -69,30 +101,28 @@ function AddGovernmentEntities({
         throw new Error("Please enter a valid email address");
       }
 
-      // Call the actual API function
-      await addGovernmentEntity({
-        name: formData.name,
-        contact_email: formData.contact_email,
-        description: formData.description,
-        contact_phone: formData.contact_phone
-      });
-      
-      // Reset form
-      setFormData({
-        name: "",
-        contact_email: "",
-        description: "",
-        contact_phone: ""
-      });
-      
-      // Call the callback if provided
-      if (onEntityAdded) {
-        onEntityAdded();
+      // Call the store action
+      const success = await addGovernmentEntity(formData);
+
+      if (success) {
+        // Reset form
+        setFormData({
+          name: "",
+          contact_email: "",
+          description: "",
+          contact_phone: "",
+        });
+
+        // Call the callback if provided
+        if (onEntityAdded) {
+          onEntityAdded();
+        }
+
+        // Close the dialog
+        onOpenChange(false);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to add department");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -102,7 +132,7 @@ function AddGovernmentEntities({
       name: "",
       contact_email: "",
       description: "",
-      contact_phone: ""
+      contact_phone: "",
     });
     setError(null);
     onOpenChange(false);
@@ -112,16 +142,18 @@ function AddGovernmentEntities({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-xl font-bold">Add New Department</DialogTitle>
+          <DialogTitle className="text-xl font-bold">
+            Add New Department
+          </DialogTitle>
         </DialogHeader>
-        
+
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm">
               {error}
             </div>
           )}
-          
+
           <div className="space-y-2">
             <Label htmlFor="name">Department Name *</Label>
             <Input
@@ -131,10 +163,10 @@ function AddGovernmentEntities({
               onChange={handleChange}
               placeholder="Enter department name"
               required
-              disabled={loading}
+              disabled={isAddingEntity}
             />
           </div>
-          
+
           <div className="space-y-2">
             <Label htmlFor="contact_email">Contact Email *</Label>
             <Input
@@ -145,10 +177,10 @@ function AddGovernmentEntities({
               onChange={handleChange}
               placeholder="Enter contact email"
               required
-              disabled={loading}
+              disabled={isAddingEntity}
             />
           </div>
-          
+
           <div className="space-y-2">
             <Label htmlFor="contact_phone">Contact Phone *</Label>
             <Input
@@ -159,10 +191,10 @@ function AddGovernmentEntities({
               onChange={handleChange}
               placeholder="Enter contact phone number"
               required
-              disabled={loading}
+              disabled={isAddingEntity}
             />
           </div>
-          
+
           <div className="space-y-2">
             <Label htmlFor="description">Description *</Label>
             <Textarea
@@ -173,25 +205,21 @@ function AddGovernmentEntities({
               placeholder="Enter department description"
               rows={4}
               required
-              disabled={loading}
+              disabled={isAddingEntity}
             />
           </div>
-          
+
           <div className="flex justify-end gap-3 pt-2">
             <Button
               type="button"
               variant="outline"
               onClick={handleCancel}
-              disabled={loading}
+              disabled={isAddingEntity}
             >
               Cancel
             </Button>
-            <Button
-              type="submit"
-              disabled={loading}
-              className="gap-2"
-            >
-              {loading ? (
+            <Button type="submit" disabled={isAddingEntity} className="gap-2">
+              {isAddingEntity ? (
                 <>
                   <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
                   Adding...

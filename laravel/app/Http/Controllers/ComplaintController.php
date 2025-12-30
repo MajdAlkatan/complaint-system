@@ -5,7 +5,7 @@ use App\Interfaces\IComplaintRepo;
 use App\Interfaces\IComplaintTypeRepo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Broadcast;
-use App\Broadcast\MyEvent;
+use App\Events\MyEvent;
 use Pusher\Pusher;
 class ComplaintController extends Controller
 {
@@ -20,7 +20,7 @@ class ComplaintController extends Controller
 
     public function index(){
         $data = $this->complaintRepo->getAll();
-        // event(new MyEvent('hello world'));
+        event(new MyEvent('hello world'));
         return response()->json($data);
     }
 
