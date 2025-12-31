@@ -144,4 +144,11 @@ class CitizenController extends Controller
         }
     }
 
+
+    public function CheckUser(Request $request){
+        $user = Auth::guard('citizen')->user();
+        return response()->json($user);
+    }
+
+
 }

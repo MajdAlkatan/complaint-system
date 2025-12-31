@@ -89,6 +89,11 @@ class EmployeeController extends Controller
         ]);
     }
 
+    public function CheckUser(Request $request){
+        $user = Auth::guard('employee')->user();
+        return response()->json($user);
+    }
+
 
     protected function createRefreshToken($user)
     {

@@ -33,7 +33,8 @@ Route::post('admins/login', [AdminController::class, 'login'])
     ->middleware('LogUserActivity');
 
 Route::post('admins/refresh', [AdminController::class, 'refresh']);
-
+Route::get('admins/CheckUser', [AdminController::class,'CheckUser'])
+    ->middleware('admin');
 
 Route::post('citizens/register', [CitizenController::class, 'register'])
     ->middleware('LogUserActivity');
@@ -81,6 +82,8 @@ Route::put('attachments/{id}', [AttachmentController::class, 'update'])
 */
 Route::get('citizen', [CitizenController::class, 'index'])
     ->middleware('auth:api');
+Route::get('citizen/CheckUser', [CitizenController::class,'CheckUser'])
+    ->middleware('citizen');
 Route::get('citizen/{id}', [CitizenController::class, 'getById'])
     ->middleware('auth:api');
 Route::post('citizen', [CitizenController::class, 'store']);
@@ -143,6 +146,8 @@ Route::put('complaints/{id}', [ComplaintController::class, 'update'])
 */
 Route::get('employees', [EmployeeController::class, 'index'])
     ->middleware('admin');
+Route::get('employees/CheckUser', [EmployeeController::class,'CheckUser'])
+    ->middleware('employee');
 Route::get('employees/{id}', [EmployeeController::class, 'getById'])
     ->middleware('admin');
 //Route::post('employees', [EmployeeController::class, 'store'])

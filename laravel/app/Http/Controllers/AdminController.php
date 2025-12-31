@@ -110,4 +110,11 @@ class AdminController extends Controller
             ], 500);
         }
     }
+
+
+    public function CheckUser(Request $request){
+        $user = Auth::guard('admin')->user();
+        return response()->json($user);
+    }
+
 }
