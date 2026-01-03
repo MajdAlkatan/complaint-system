@@ -172,6 +172,11 @@ export default function AdminLoginPage() {
                   </Button>
                 </form>
               </Form>
+              <div className="pt-3">
+                <a href="/" className="text-gray-700 text-[15px] underline">
+                  Go to the home page
+                </a>
+              </div>
             </CardContent>
           </Card>
 

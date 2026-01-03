@@ -73,7 +73,7 @@ export const useEmployeeAuthStore = create<EmployeeAuthState>()(
             console.log("Login response:", response);
 
             if (response.data && response.status === 200) {
-              const employeeData = response.data.data;
+              const employeeData = response.data.user;
               const accessToken = response.data.access_token;
               const refreshToken = response.data.refresh_token;
 
