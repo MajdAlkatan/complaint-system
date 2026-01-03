@@ -19,6 +19,9 @@ import AdminBackupPage from "../pages/admin/AdminBackupPage";
 
 import EmployeeProtectedRoute from "../components/employee/EmployeeProtectedRoute";
 import AdminProtectedRoute from "../components/admin/AdminProtectedRoute";
+import EmployeeLayout from "../components/layout/employeeLayout/EmployeeLayout";
+import ComplaintsPage from "../pages/ComplaintsPage";
+import AdminCitizenPage from "../pages/admin/AdminCitizenPage";
 
 function AppRoutes() {
   return (
@@ -44,10 +47,10 @@ function AppRoutes() {
         }
       >
         <Route index element={<AdminOverviewPage />} />
-        <Route path="overview" element={<AdminOverviewPage />} />
-        <Route path="analytics" element={<AdminAnalyticsPage />} />
-        <Route path="employee" element={<AdminEmployeePage />} />
-        <Route path="department" element={<AdminDepartmentPage />} />
+        <Route path="complaints" element={<ComplaintsPage />} />
+        <Route path="citizens" element={<AdminCitizenPage />} />
+        <Route path="employees" element={<AdminEmployeePage />} />
+        <Route path="departments" element={<AdminDepartmentPage />} />
         <Route path="category" element={<AdminCategoryPage />} />
         <Route path="logs" element={<AdminLogsPage />} />
         <Route path="security" element={<AdminSecurityPage />} />
@@ -67,10 +70,13 @@ function AppRoutes() {
         path="/employee-dashboard"
         element={
           <EmployeeProtectedRoute>
-            <EmployeeDashboard />
+            <EmployeeLayout />
           </EmployeeProtectedRoute>
         }
-      />
+      >
+        <Route index element={<EmployeeDashboard />} />
+        <Route path="complaints" element={<ComplaintsPage />} />
+      </Route>
     </Routes>
   );
 }

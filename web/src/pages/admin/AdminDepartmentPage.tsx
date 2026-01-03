@@ -2,19 +2,26 @@ import { Building2 } from "lucide-react";
 import DepartmentCard from "../../components/admin/cards/DepartmentCard";
 import { Button } from "../../components/ui/button";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useGovernmentEntityStore } from "../../app/store/admin/governmentEntityStore";
 import AddGovernmentEntities from "../../components/admin/dialog/AddgovernmentEntites"; // Import the dialog component
 
 const AdminDepartmentPage = () => {
   const [error, setError] = useState<string | null>(null);
-  const [dialogOpen, setDialogOpen] = useState<boolean>(false); // State to control dialog
+  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
 
   const { governmentEntities, fetchGovernmentEntities, loading } =
     useGovernmentEntityStore();
   const handleOpenDialog = (): void => {
     setDialogOpen(true);
   };
+  useEffect(() => {
+    async function fetchData() {
+      await fetchGovernmentEntities();
+    }
+
+    fetchData();
+  }, []);
 
   const handleEntityAdded = (): void => {
     setDialogOpen(false);
@@ -22,11 +29,11 @@ const AdminDepartmentPage = () => {
 
   return (
     <div className="">
-      <div className="bg-white rounded-xl sm:mx-16 p-2 py-3 sm:p-12 sm:py-5">
+      <div className="bg-white rounded-xl  p-2 py-3 sm:p-10 sm:py-5">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 sm:mb-8 gap-4 max-sm:px-1">
           <div>
-            <h1 className="text-lg sm:text-2xl font-bold text-gray-900">
+            <h1 className="text-lg sm:text-2xl font-semibold text-gray-900">
               Department Management
             </h1>
             {error && <div className="text-red-600 text-sm mt-1">{error}</div>}
@@ -41,7 +48,6 @@ const AdminDepartmentPage = () => {
           </Button>
         </div>
 
-        {/* AddGovernmentEntities Dialog - Controlled from parent */}
         <AddGovernmentEntities
           open={dialogOpen}
           onOpenChange={setDialogOpen}
@@ -54,7 +60,6 @@ const AdminDepartmentPage = () => {
           </div>
         )}
 
-        {/* Error State (when not loading but there's an error) */}
         {!loading && error && governmentEntities.length === 0 && (
           <div className="flex flex-col justify-center items-center py-12">
             <div className="text-red-600 mb-2">{error}</div>
@@ -77,9 +82,8 @@ const AdminDepartmentPage = () => {
           </div>
         )}
 
-        {/* Department Grid */}
         {!loading && !error && governmentEntities.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2  gap-4 sm:gap-6">
             {governmentEntities.map((entity, index) => (
               <DepartmentCard
                 id={entity.government_entities_id}
