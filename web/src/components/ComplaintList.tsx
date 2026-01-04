@@ -391,7 +391,7 @@ import {
 } from "./ui/dropdown-menu";
 import { format } from "date-fns";
 import ComplaintDetailDialog from "./ComplaintDetailDialog";
-import AddNoteDialog from "./AddNoteDialog";
+
 import RequestNotesDialog from "./RequestNotesDialog";
 import { useComplaintStore } from "../app/store/complaint.store";
 
@@ -413,7 +413,7 @@ const ComplaintList = () => {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [selectedComplaintForAction, setSelectedComplaintForAction] =
     useState<any>(null);
-  const [isAddNoteOpen, setIsAddNoteOpen] = useState(false);
+
   const [isRequestNotesOpen, setIsRequestNotesOpen] = useState(false);
 
   const formatDate = (dateString: string) => {
@@ -449,11 +449,6 @@ const ComplaintList = () => {
 
   const handleUnlock = async (id: number) => {
     await unlockComplaint(id);
-  };
-
-  const handleAddNote = (complaint: any) => {
-    setSelectedComplaintForAction(complaint);
-    setIsAddNoteOpen(true);
   };
 
   const handleRequestNotes = (complaint: any) => {
@@ -568,12 +563,7 @@ const ComplaintList = () => {
                           Unlock Complaint
                         </DropdownMenuItem>
                       )}
-                      <DropdownMenuItem
-                        onClick={() => handleAddNote(complaint)}
-                      >
-                        <Edit className="w-4 h-4 mr-2" />
-                        Add Notes
-                      </DropdownMenuItem>
+
                       <DropdownMenuItem
                         onClick={() => handleRequestNotes(complaint)}
                       >
@@ -660,11 +650,7 @@ const ComplaintList = () => {
 
       {/* Dialogs */}
       <ComplaintDetailDialog />
-      <AddNoteDialog
-        open={isAddNoteOpen}
-        onOpenChange={setIsAddNoteOpen}
-        complaint={selectedComplaintForAction}
-      />
+
       <RequestNotesDialog
         open={isRequestNotesOpen}
         onOpenChange={setIsRequestNotesOpen}

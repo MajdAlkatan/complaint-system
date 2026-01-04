@@ -16,7 +16,10 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import { useEmployeeAuthStore } from "../../../app/store/employee/employeeAuth.store";
+import {
+  checkEmployeeAuthStatus,
+  useEmployeeAuthStore,
+} from "../../../app/store/employee/employeeAuth.store";
 import {
   Avatar,
   AvatarFallback,
@@ -44,18 +47,45 @@ interface Notification {
 }
 
 const EmployeeLayout = () => {
-  const { isAuthenticated, employee, logout } = useEmployeeAuthStore();
+  const { isAuthenticated, employee, logout, isCheckingAuth } =
+    useEmployeeAuthStore();
   const navigate = useNavigate();
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [authChecked, setAuthChecked] = useState(false);
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      navigate("/employee-login");
-    }
-  }, [isAuthenticated, navigate]);
+    const checkAuth = async () => {
+      if (!authChecked) {
+        try {
+          if (isAuthenticated || localStorage.getItem("accessToken")) {
+            console.log("Checking user authentication...");
+            const isAuthValid = await checkEmployeeAuthStatus();
+
+            if (!isAuthValid) {
+              console.log("Authentication invalid, redirecting to login...");
+              logout();
+              navigate("/employee-login");
+              return;
+            }
+          } else {
+            navigate("/employee-login");
+            return;
+          }
+        } catch (error) {
+          console.error("Error checking authentication:", error);
+          logout();
+          navigate("/employee-login");
+        } finally {
+          setAuthChecked(true);
+        }
+      }
+    };
+
+    checkAuth();
+  }, [navigate, isAuthenticated, logout, authChecked]);
 
   useEffect(() => {
     // Fetch notifications (mock data for now)

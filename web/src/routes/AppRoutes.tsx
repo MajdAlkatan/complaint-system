@@ -8,10 +8,10 @@ import EmployeeDashboard from "../pages/employee/EmployeeDashboard";
 import EmployeeLoginPage from "../pages/employee/EmployeeLoginPage";
 
 import AdminOverviewPage from "../pages/admin/AdminOverviewPage";
-import AdminAnalyticsPage from "../pages/admin/AdminAnalyticsPage";
+
 import AdminEmployeePage from "../pages/admin/AdminEmployeePage";
 import AdminDepartmentPage from "../pages/admin/AdminDepartmentPage";
-import AdminCategoryPage from "../pages/admin/AdminCategoryPage";
+
 import AdminLogsPage from "../pages/admin/AdminLogsPage";
 import AdminSecurityPage from "../pages/admin/AdminSecurityPage";
 import AdminPerformancePage from "../pages/admin/AdminPerformancePage";
@@ -22,6 +22,7 @@ import AdminProtectedRoute from "../components/admin/AdminProtectedRoute";
 import EmployeeLayout from "../components/layout/employeeLayout/EmployeeLayout";
 import ComplaintsPage from "../pages/ComplaintsPage";
 import AdminCitizenPage from "../pages/admin/AdminCitizenPage";
+import AdminTypesOfComplaintsPage from "../pages/admin/AdminTypesOfComplaintsPage";
 
 function AppRoutes() {
   return (
@@ -51,7 +52,10 @@ function AppRoutes() {
         <Route path="citizens" element={<AdminCitizenPage />} />
         <Route path="employees" element={<AdminEmployeePage />} />
         <Route path="departments" element={<AdminDepartmentPage />} />
-        <Route path="category" element={<AdminCategoryPage />} />
+        <Route
+          path="types-of-complaint"
+          element={<AdminTypesOfComplaintsPage />}
+        />
         <Route path="logs" element={<AdminLogsPage />} />
         <Route path="security" element={<AdminSecurityPage />} />
         <Route path="performance" element={<AdminPerformancePage />} />
