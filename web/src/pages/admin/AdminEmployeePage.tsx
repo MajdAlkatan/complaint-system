@@ -311,20 +311,23 @@
 
 // export default AdminEmployeePage;
 
-import { Download, Edit, Plus, RefreshCw, Trash2 } from "lucide-react";
+import { Edit, Plus, RefreshCw, Trash2 } from "lucide-react";
 import { useEffect } from "react";
-import { Badge } from "../../components/ui/badge";
-import { Button } from "../../components/ui/button";
-import { Card } from "../../components/ui/card";
-import AddEmployeeForm from "../../components/admin/forms/AddEmployeeForm";
 import toast from "react-hot-toast";
 import {
   useEmployeeStore,
   type EmployeeWithDepartment,
 } from "../../app/store/admin/employeeStore";
 import { useGovernmentEntityStore } from "../../app/store/admin/governmentEntityStore";
+import AddEmployeeForm from "../../components/admin/forms/AddEmployeeForm";
+import { Badge } from "../../components/ui/badge";
+import { Button } from "../../components/ui/button";
+import { Card } from "../../components/ui/card";
 
 const AdminEmployeePage = () => {
+  useEffect(() => {
+    handleRefreshData();
+  }, []);
   // Use stores
   const {
     employees,
@@ -333,6 +336,7 @@ const AdminEmployeePage = () => {
     isAddDialogOpen,
     fetchEmployees,
     setIsAddDialogOpen,
+    deleteEmployee,
   } = useEmployeeStore();
 
   const {
@@ -342,34 +346,11 @@ const AdminEmployeePage = () => {
     fetchGovernmentEntities,
   } = useGovernmentEntityStore();
 
-  // Load all data
-  useEffect(() => {
-    const loadAllData = async () => {
-      try {
-        // Load government entities first (needed for employee department mapping)
-        await fetchGovernmentEntities();
-
-        // Then load employees
-        await fetchEmployees();
-      } catch (error) {
-        console.error("Failed to load data:", error);
-      }
-    };
-
-    loadAllData();
-  }, []);
-
-  // Also refresh employees list when dialog closes (after adding new employee)
-  const handleEmployeeAdded = () => {
-    fetchEmployees();
-  };
-
   // Refresh all data
   const handleRefreshData = async () => {
     try {
       await fetchGovernmentEntities();
       await fetchEmployees();
-      toast.success("Data refreshed successfully");
     } catch (error) {
       toast.error("Failed to refresh data");
     }
@@ -408,19 +389,6 @@ const AdminEmployeePage = () => {
     return actions;
   };
 
-  const handleDelete = async (employeeId: number) => {
-    if (window.confirm("Are you sure you want to delete this employee?")) {
-      try {
-        // Here you would call deleteEmployee API
-        // await deleteEmployee(employeeId);
-        toast.success("Employee deleted successfully");
-        fetchEmployees(); // Refresh the list
-      } catch (error) {
-        toast.error("Failed to delete employee");
-      }
-    }
-  };
-
   // Show errors if any
   useEffect(() => {
     if (employeeError) {
@@ -433,7 +401,7 @@ const AdminEmployeePage = () => {
 
   return (
     <div className="">
-      <div className="bg-white rounded-xl sm:mx-16 p-2 py-3 sm:p-12 sm:py-5">
+      <div className="bg-white rounded-xl  p-2 py-3 sm:p-12 sm:py-5">
         {/* Header */}
         <div className="mb-8">
           <div className="flex md:items-center justify-between max-md:flex-col max-md:gap-4 max-md:px-2">
@@ -566,7 +534,7 @@ const AdminEmployeePage = () => {
                           variant="ghost"
                           size="icon"
                           className="h-9 w-9 text-red-600 hover:text-red-700 hover:bg-red-50"
-                          onClick={() => handleDelete(employee.employee_id)}
+                          onClick={() => deleteEmployee(employee.employee_id)}
                         >
                           <Trash2 className="w-4 h-4" />
                         </Button>
@@ -583,7 +551,6 @@ const AdminEmployeePage = () => {
       <AddEmployeeForm
         open={isAddDialogOpen}
         onOpenChange={setIsAddDialogOpen}
-        onEmployeeAdded={handleEmployeeAdded}
         governmentEntities={governmentEntities}
       />
     </div>

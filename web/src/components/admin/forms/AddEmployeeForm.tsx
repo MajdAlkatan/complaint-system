@@ -28,14 +28,14 @@ import {
 interface AddEmployeeFormProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onEmployeeAdded?: () => void;
+
   governmentEntities: GovernmentEntity[];
 }
 
 const AddEmployeeForm = ({
   open,
   onOpenChange,
-  onEmployeeAdded,
+
   governmentEntities,
 }: AddEmployeeFormProps) => {
   // Use Zustand store
@@ -102,9 +102,7 @@ const AddEmployeeForm = ({
 
     if (success) {
       // Call the callback to refresh the employee list
-      if (onEmployeeAdded) {
-        onEmployeeAdded();
-      }
+
       onOpenChange(false);
     }
   };

@@ -36,3 +36,12 @@
   --card: 222.2deg 84% 4.9%;
   --card-foreground: 210deg 40% 98%;
 }
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
