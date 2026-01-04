@@ -50,7 +50,6 @@ interface ComplaintStore {
   unlockComplaint: (id: number) => Promise<boolean>;
   requestNotes: (id: number, message?: string) => Promise<boolean>;
   updateComplaint: (id: number, data: UpdateComplaintData) => Promise<boolean>;
-  addNote: (id: number, note: string) => Promise<boolean>;
 
   // Helper methods
   getComplaintById: (id: number) => Complaint | undefined;
@@ -228,37 +227,6 @@ export const useComplaintStore = create<ComplaintStore>()(
             error.response?.data?.message ||
             error.message ||
             "Failed to update complaint";
-          toast.error(errorMessage);
-          return false;
-        }
-      },
-
-      // Add note to complaint
-      addNote: async (id: number, note: string): Promise<boolean> => {
-        try {
-          // This assumes you have an endpoint for adding notes
-          const response = await axiosInstance.post(`/complaints/${id}/notes`, {
-            note,
-          });
-
-          if (response.status === 200 || response.status === 201) {
-            toast.success("Note added successfully!");
-
-            // Refresh complaints list
-            await get().fetchComplaints();
-
-            return true;
-          } else {
-            const errorMsg = response.data?.message || "Failed to add note";
-            toast.error(errorMsg);
-            return false;
-          }
-        } catch (error: any) {
-          console.error("Error adding note:", error);
-          const errorMessage =
-            error.response?.data?.message ||
-            error.message ||
-            "Failed to add note";
           toast.error(errorMessage);
           return false;
         }

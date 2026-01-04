@@ -98,27 +98,23 @@
 // export default AdminLayout;
 
 import {
-  AlertCircle,
   BarChart,
   Bell,
-  Calendar,
-  CheckCircle,
   FileText,
-  HelpCircle,
   Home,
   LogOut,
   Mail,
   Menu,
-  Section,
-  SectionIcon,
   Settings,
   User,
   User2Icon,
   X,
 } from "lucide-react";
 import { FcDepartment } from "react-icons/fc";
+import { TbCategoryPlus } from "react-icons/tb";
 
 import { useEffect, useState } from "react";
+import { GrUserWorker } from "react-icons/gr";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import {
   Avatar,
@@ -134,10 +130,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../../../components/ui/dropdown-menu";
-import { GrUserWorker } from "react-icons/gr";
 
-import { cn } from "../../../lib/utils";
 import { useAdminAuthStore } from "../../../app/store/admin/adminAuth.store";
+import { cn } from "../../../lib/utils";
 
 // Define TypeScript interfaces
 interface Notification {
@@ -242,6 +237,11 @@ const AdminLayout = () => {
       path: "/admin-dashboard/departments",
       label: "Departments",
       icon: FcDepartment,
+    },
+    {
+      path: "/admin-dashboard/types-of-complaint",
+      label: "Complaint Types",
+      icon: TbCategoryPlus,
     },
     { path: "/admin-dashboard/settings", label: "Settings", icon: Settings },
   ];
