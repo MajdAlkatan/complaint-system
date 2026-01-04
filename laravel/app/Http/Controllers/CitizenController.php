@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\Interfaces\ICitizenRepo;
 use Auth;
+use Cache;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Exceptions\JWTException;
@@ -19,17 +20,25 @@ class CitizenController extends Controller
     }
 
     public function index(){
-        $data = $this->citizenRepo->getAll();
+
+        $data = Cache::remember('Citizens', 3600, function () {
+            return $this->citizenRepo->getAll();
+        });
         return response()->json($data);
     }
 
     public function getById($id){
-        $data = $this->citizenRepo->getById($id);
+        $data = Cache::remember("citizen_{$id}", 3600, function () use ($id) {
+            return $this->citizenRepo->getById($id);
+        });
+        //$data = $this->citizenRepo->getById($id);
         return response()->json($data);
     }
 
 
     public function delete($id){
+        if (Cache::has("citizen_{$id}"))
+            Cache::forget("citizen_{$id}");
         $data = $this->citizenRepo->delete($id);
         return response()->json(['message' => 'deleted']);
     }
@@ -39,7 +48,10 @@ class CitizenController extends Controller
     }
 
     public function update($id , Request $request){
+        if (Cache::has("citizen_{$id}"))
+            Cache::forget("citizen_{$id}");
         $this->citizenRepo->update($id,$request->all());
+        $this->citizenRepo->update($id,['updated_at'=> now()]);
         return response()->json(['message' => 'The data has been updated succesfully ']);
     }
 

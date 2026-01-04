@@ -81,11 +81,11 @@ Route::put('attachments/{id}', [AttachmentController::class, 'update'])
 *************
 */
 Route::get('citizen', [CitizenController::class, 'index'])
-    ->middleware('auth:api');
+    ;//->middleware('auth:api');
 Route::get('citizen/CheckUser', [CitizenController::class,'CheckUser'])
     ->middleware('citizen');
 Route::get('citizen/{id}', [CitizenController::class, 'getById'])
-    ->middleware('auth:api');
+    ;//->middleware('auth:api');
 Route::post('citizen', [CitizenController::class, 'store']);
 //->middleware('auth:api');
 Route::post('citizens/refresh', [CitizenController::class, 'refresh']);
@@ -93,7 +93,7 @@ Route::post('citizens/refresh', [CitizenController::class, 'refresh']);
 Route::delete('citizen/{id}', action: [CitizenController::class, 'delete'])
     ->middleware('auth:api');
 Route::put('citizen/{id}', [CitizenController::class, 'update'])
-    ->middleware('auth:api');
+    ;//->middleware('auth:api');
 
 
 /*
