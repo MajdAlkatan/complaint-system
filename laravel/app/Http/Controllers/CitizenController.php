@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Interfaces\ICitizenRepo;
 use Auth;
 use Cache;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Exceptions\JWTException;
@@ -39,8 +40,16 @@ class CitizenController extends Controller
     public function delete($id){
         if (Cache::has("citizen_{$id}"))
             Cache::forget("citizen_{$id}");
-        $data = $this->citizenRepo->delete($id);
+        $this->citizenRepo->delete($id);
         return response()->json(['message' => 'deleted']);
+    }
+
+    public function lock($id , Request $request){
+        if (Cache::has("citizen_{$id}"))
+            Cache::forget("citizen_{$id}");
+        $citizen = $this->citizenRepo->getById($id);
+        $citizen->locked_until = Carbon::now()->addHours($request->hoursCnt)->toDateTimeString();
+        return response()->json(['message' => 'the citizen account has locked until '. $citizen->locked_until]);
     }
 
     public function store(Request $request){

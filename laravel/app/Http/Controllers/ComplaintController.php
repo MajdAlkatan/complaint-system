@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Interfaces\IComplaintRepo;
 use App\Interfaces\IComplaintTypeRepo;
+use Cache;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Broadcast;
 use App\Events\MyEvent;
 use Pusher\Pusher;
+use Spatie\Activitylog\Models\Activity;
 
 class ComplaintController extends Controller
 {
@@ -23,28 +25,35 @@ class ComplaintController extends Controller
 
     public function index()
     {
-        $data = $this->complaintRepo->getAll();
-        event(new MyEvent('hello world'));
+        //$data = $this->complaintRepo->getAll();
+        $data = Cache::remember("complaints", 3600, function () {
+            return $this->complaintRepo->getAll();
+        });
         return response()->json($data);
     }
 
 
     public function getMyComplaints()
     {
-        $data = $this->complaintRepo->getWhereEq('citizen_id', auth()->guard('citizen')->id());
+        $id = auth()->guard('citizen')->id();
+        $data = Cache::remember("complaintsFor_{$id}", 3600, function () {
+            return $this->complaintRepo->getWhereEq('citizen_id', auth()->guard('citizen')->id());
+        });
+        //$data = $this->complaintRepo->getWhereEq('citizen_id', auth()->guard('citizen')->id());
         return response()->json($data);
     }
 
 
     public function getAllTypes()
     {
-        $types = $this->complaintTypeRepo->getAll();
-        // Return the response as JSON
+        $types = Cache::remember('cacheTypes',3600, function () {
+            return $this->complaintTypeRepo->getAll();
+        });
+        //$types = $this->complaintTypeRepo->getAll();
         return response()->json($types);
     }
     public function getMyComplaintById($id)
     {
-
         $data = $this->complaintRepo->getById($id);
         if (!auth()->guard('citizen')->id() == $data->citizen_id)
             return response()->json(['message' => 'UnAuthorize'], 403);
@@ -54,13 +63,19 @@ class ComplaintController extends Controller
 
     public function getById($id)
     {
-        $data = $this->complaintRepo->getById($id);
+        $data = Cache::remember("Complaint_{$id}",3600, function () use ($id) {
+            return $this->complaintRepo->getById($id);
+        });
+        //$data = $this->complaintRepo->getById($id);
         return response()->json($data);
     }
 
     public function getByReferenceNumber($num)
-    {
-        $data = $this->complaintRepo->getFirstEq('reference_number', $num);
+    {   
+        $data = Cache::remember("Complaint_{$num}",0, function () use ($num) {
+            return $this->complaintRepo->getFirstEq('reference_number', $num);
+        });
+        //$data = $this->complaintRepo->getFirstEq('reference_number', $num);
         return response()->json($data);
     }
 
@@ -188,5 +203,34 @@ class ComplaintController extends Controller
         return response()->json(['message' => 'The data has been inserted succesfully ']);
     }
 
-    
+    public function deleteType($id)
+    {
+        $this->complaintTypeRepo->delete($id);
+        return response()->json(['message' => 'The Type has deleted succesfully ']);
+    }
+
+      /*** complaint acitvity */
+
+    public function getComplaintHistory($id)
+    {
+        // جلب كافة الأنشطة المتعلقة بهذه الشكوى من خلال الـ ID المخزن في الخصائص
+        $history = Activity::where('log_name', 'edit-complaint-status')
+            ->where('properties->complaint-id', $id) // تحديد النوع الذي سجلته في الميدل وير
+            ->with('causer') // لجلب بيانات الموظف الذي قام بالتعديل
+            ->get();
+
+        // تنسيق البيانات للعرض
+        $formattedHistory = $history->map(function ($activity) {
+            return [
+                'editor_name'  => $activity->causer ? $activity->causer->name : 'Unknown',
+                'editor_email' => $activity->causer ? $activity->causer->email : 'N/A',
+                'new_status'   => $activity->getExtraProperty('new-status'),
+                'ip_address'   => $activity->getExtraProperty('ip'),
+                'edit_time'    => $activity->created_at->format('Y-m-d H:i:s'),
+                'description'  => $activity->description,
+            ];
+        });
+
+        return response()->json($formattedHistory);
+    }
 }
