@@ -9,10 +9,9 @@ import '../controllers/home_controller.dart';
 import '../../../core/widgets/loading_widget.dart';
 
 class HomePage extends GetView<HomeController> {
-
   @override
   Widget build(BuildContext context) {
-     return MainLayout(
+    return MainLayout(
       currentIndex: 0, // Home is selected
       child: Scaffold(
         backgroundColor: AppColors.background,
@@ -20,23 +19,24 @@ class HomePage extends GetView<HomeController> {
           if (controller.isLoading.value) {
             return LoadingWidget(message: 'Loading complaints...');
           }
-        return Column(
-          children: [
-            // Header Section
-            _buildHeader(),
+          return Column(
+            children: [
+              // Header Section
+              _buildHeader(),
 
-            // Quick Action Button
-            _buildQuickAction(),
+              // Quick Action Button
+              _buildQuickAction(),
 
-            // Filter Chips
-            _buildFilterChips(),
+              // Filter Chips
+              _buildFilterChips(),
 
-            // Complaints List
-            _buildComplaintsList(),
-          ],
-        );
-      }),
-    ));
+              // Complaints List
+              _buildComplaintsList(),
+            ],
+          );
+        }),
+      ),
+    );
   }
 
   Widget _buildHeader() {
@@ -151,19 +151,13 @@ class HomePage extends GetView<HomeController> {
         title: Text('Logout'),
         content: Text('Are you sure you want to logout?'),
         actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: Text('Cancel'),
-          ),
+          TextButton(onPressed: () => Get.back(), child: Text('Cancel')),
           TextButton(
             onPressed: () async {
               Get.back();
               await _performLogout();
             },
-            child: Text(
-              'Logout',
-              style: TextStyle(color: AppColors.error),
-            ),
+            child: Text('Logout', style: TextStyle(color: AppColors.error)),
           ),
         ],
       ),
@@ -175,10 +169,9 @@ class HomePage extends GetView<HomeController> {
       // Clear the token from storage
       final authRepository = Get.find<AuthRepository>();
       await authRepository.logout();
-      
+
       // Navigate to login page
       Get.offAllNamed('/login');
-      
     } catch (e) {
       print('Logout error: $e');
       // Still navigate to login even if there's an error
@@ -355,10 +348,14 @@ class ComplaintCard extends GetView<HomeController> {
                             vertical: 4,
                           ),
                           decoration: BoxDecoration(
-                            color: _getStatusColor(complaint.status).withOpacity(0.1),
+                            color: _getStatusColor(
+                              complaint.status,
+                            ).withOpacity(0.1),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: _getStatusColor(complaint.status).withOpacity(0.3),
+                              color: _getStatusColor(
+                                complaint.status,
+                              ).withOpacity(0.3),
                             ),
                           ),
                           child: Text(
@@ -377,10 +374,14 @@ class ComplaintCard extends GetView<HomeController> {
                             vertical: 4,
                           ),
                           decoration: BoxDecoration(
-                            color: _getPriorityColor(complaint.priority).withOpacity(0.1),
+                            color: _getPriorityColor(
+                              complaint.priority,
+                            ).withOpacity(0.1),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: _getPriorityColor(complaint.priority).withOpacity(0.3),
+                              color: _getPriorityColor(
+                                complaint.priority,
+                              ).withOpacity(0.3),
                             ),
                           ),
                           child: Text(
@@ -454,7 +455,9 @@ class ComplaintCard extends GetView<HomeController> {
                     ),
                     SizedBox(width: 4),
                     Text(
-                      complaint.createdAt.format('MM/dd/yyyy'),
+                      _formatDate(
+                        complaint.createdAt,
+                      ), // استخدام دالة تنسيق التاريخ
                       style: TextStyle(
                         fontSize: 12,
                         color: AppColors.textSecondary,
@@ -468,6 +471,10 @@ class ComplaintCard extends GetView<HomeController> {
         ),
       ),
     );
+  }
+
+  String _formatDate(DateTime date) {
+    return '${date.day}/${date.month}/${date.year}';
   }
 
   Color _getStatusColor(String status) {
@@ -514,7 +521,6 @@ class ComplaintCard extends GetView<HomeController> {
         return status;
     }
   }
-
 
   String _getLocationFromDescription(String description) {
     if (description.contains('Location:')) {

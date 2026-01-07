@@ -44,9 +44,36 @@ class ComplaintController extends Controller
     }
 
 
+    public function deleteType($id)
+    {
+        // Fetch the complaint type by ID
+        $complaintType = $this->complaintTypeRepo->getById($id);
+
+        if (!$complaintType) {
+            return response()->json(['message' => 'Complaint type not found'], 404);
+        }
+
+        // Optionally, check if the user is authorized to delete complaint types
+        // Assuming you have an admin check in your middleware or logic
+        if (!auth()->guard('admin')->check()) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $this->complaintTypeRepo->delete($id);
+
+        return response()->json(['message' => 'The complaint type has been deleted successfully']);
+    }
+
+    // public function deleteType($id)
+    // {
+    //     $this->complaintTypeRepo->delete($id);
+    //     return response()->json(['message' => 'The Type has deleted succesfully ']);
+    // }
+
+
     public function getAllTypes()
     {
-        $types = Cache::remember('cacheTypes',3600, function () {
+        $types = Cache::remember('cacheTypes', 3600, function () {
             return $this->complaintTypeRepo->getAll();
         });
         //$types = $this->complaintTypeRepo->getAll();
@@ -63,7 +90,7 @@ class ComplaintController extends Controller
 
     public function getById($id)
     {
-        $data = Cache::remember("Complaint_{$id}",3600, function () use ($id) {
+        $data = Cache::remember("Complaint_{$id}", 3600, function () use ($id) {
             return $this->complaintRepo->getById($id);
         });
         //$data = $this->complaintRepo->getById($id);
@@ -71,8 +98,8 @@ class ComplaintController extends Controller
     }
 
     public function getByReferenceNumber($num)
-    {   
-        $data = Cache::remember("Complaint_{$num}",0, function () use ($num) {
+    {
+        $data = Cache::remember("Complaint_{$num}", 0, function () use ($num) {
             return $this->complaintRepo->getFirstEq('reference_number', $num);
         });
         //$data = $this->complaintRepo->getFirstEq('reference_number', $num);
@@ -203,13 +230,8 @@ class ComplaintController extends Controller
         return response()->json(['message' => 'The data has been inserted succesfully ']);
     }
 
-    public function deleteType($id)
-    {
-        $this->complaintTypeRepo->delete($id);
-        return response()->json(['message' => 'The Type has deleted succesfully ']);
-    }
 
-      /*** complaint acitvity */
+    /*** complaint acitvity */
 
     public function getComplaintHistory($id)
     {
