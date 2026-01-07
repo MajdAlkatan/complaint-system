@@ -36,6 +36,28 @@ class ComplaintController extends Controller
     }
 
 
+    public function deleteType($id)
+{
+    // Fetch the complaint type by ID
+    $complaintType = $this->complaintTypeRepo->getById($id);
+
+    if (!$complaintType) {
+        return response()->json(['message' => 'Complaint type not found'], 404);
+    }
+
+    // Optionally, check if the user is authorized to delete complaint types
+    // Assuming you have an admin check in your middleware or logic
+    if (!auth()->guard('admin')->check()) {
+        return response()->json(['message' => 'Unauthorized'], 403);
+    }
+
+    $this->complaintTypeRepo->delete($id);
+
+    return response()->json(['message' => 'The complaint type has been deleted successfully']);
+}
+
+
+
     public function getAllTypes()
     {
         $types = $this->complaintTypeRepo->getAll();

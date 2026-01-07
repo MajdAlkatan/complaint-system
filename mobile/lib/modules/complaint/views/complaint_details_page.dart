@@ -3,6 +3,7 @@ import 'package:complaint/core/theme/colors.dart';
 import 'package:complaint/core/utils/extensions.dart';
 import 'package:complaint/data/models/complaint_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -18,14 +19,14 @@ class _ComplaintDetailsPageState extends State<ComplaintDetailsPage> {
   final ComplaintController controller = Get.find<ComplaintController>();
   final ScrollController _scrollController = ScrollController();
   bool _showAppBarTitle = false;
-  
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance?.addPostFrameCallback((_) {
       _loadComplaint();
     });
-    
+
     // Listen to scroll to show/hide app bar title
     _scrollController.addListener(() {
       if (_scrollController.offset > 100 && !_showAppBarTitle) {
@@ -35,34 +36,50 @@ class _ComplaintDetailsPageState extends State<ComplaintDetailsPage> {
       }
     });
   }
-  
+
   @override
   void dispose() {
     _scrollController.dispose();
     super.dispose();
   }
-  
+
   void _loadComplaint() {
     final arguments = Get.arguments;
     print('=== LOADING COMPLAINT ===');
     print('Arguments type: ${arguments.runtimeType}');
     print('Arguments value: $arguments');
-    
+
+    // الحل: دائماً إعادة تحميل من الـ API للحصول على أحدث البيانات
     if (arguments is Map<String, dynamic>) {
       print('Arguments is Map (JSON)');
       try {
         final complaint = Complaint.fromJson(arguments);
         print('Successfully parsed complaint from JSON: ${complaint.id}');
-        controller.loadComplaint(complaint);
+
+        // تحميل البيانات من الـ API بدلاً من استخدام البيانات المحلية
+        controller.fetchComplaintDetails(complaint.id);
       } catch (e) {
         print('Error parsing complaint from JSON: $e');
+
+        // إذا فشل التحليل، حاول الحصول على الـ ID
+        if (arguments.containsKey('complaints_id')) {
+          controller.fetchComplaintDetails(
+            arguments['complaints_id'].toString(),
+          );
+        } else if (arguments.containsKey('id')) {
+          controller.fetchComplaintDetails(arguments['id'].toString());
+        }
       }
     } else if (arguments is String) {
       print('Arguments is String ID: $arguments');
       controller.fetchComplaintDetails(arguments);
+    } else if (arguments is Complaint) {
+      // إذا كان Complaint object مباشراً
+      print('Arguments is Complaint object');
+      controller.fetchComplaintDetails(arguments.id);
     } else {
       print('Arguments type not recognized: ${arguments.runtimeType}');
-      
+
       // Get complaint ID from route parameters
       final parameters = Get.parameters;
       if (parameters.containsKey('id')) {
@@ -82,17 +99,17 @@ class _ComplaintDetailsPageState extends State<ComplaintDetailsPage> {
         if (controller.isLoading.value) {
           return LoadingWidget(message: 'Loading complaint details...');
         }
-        
+
         final complaint = controller.complaint.value;
         if (complaint == null) {
           return _buildNotFoundState();
         }
-        
+
         return _buildComplaintDetails(complaint);
       }),
     );
   }
-  
+
   Widget _buildNotFoundState() {
     return Center(
       child: Column(
@@ -116,10 +133,7 @@ class _ComplaintDetailsPageState extends State<ComplaintDetailsPage> {
           Text(
             'The complaint you\'re looking for doesn\'t exist or has been removed',
             textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 16,
-              color: AppColors.textSecondary,
-            ),
+            style: TextStyle(fontSize: 16, color: AppColors.textSecondary),
           ),
           SizedBox(height: 32),
           ElevatedButton(
@@ -142,7 +156,7 @@ class _ComplaintDetailsPageState extends State<ComplaintDetailsPage> {
       ),
     );
   }
-  
+
   Widget _buildComplaintDetails(Complaint complaint) {
     return CustomScrollView(
       controller: _scrollController,
@@ -175,9 +189,72 @@ class _ComplaintDetailsPageState extends State<ComplaintDetailsPage> {
             ),
             onPressed: () => Get.back(),
           ),
+          actions: [
+            // إضافة قائمة منسدلة لخيارات التعديل والحذف
+            Obx(() {
+              final complaint = controller.complaint.value;
+              if (complaint == null) return SizedBox();
+
+              return PopupMenuButton<String>(
+                onSelected: (value) {
+                  if (value == 'edit') {
+                    _showEditDescriptionDialog(
+                      complaint.id.toString(),
+                      complaint.description,
+                    );
+                  } else if (value == 'delete') {
+                    _showDeleteConfirmationDialog(complaint.id.toString());
+                  }
+                },
+                itemBuilder: (BuildContext context) {
+                  return [
+                    PopupMenuItem<String>(
+                      value: 'edit',
+                      child: Row(
+                        children: [
+                          Icon(Icons.edit, color: AppColors.primary, size: 20),
+                          SizedBox(width: 8),
+                          Text('Edit Description'),
+                        ],
+                      ),
+                    ),
+                    PopupMenuItem<String>(
+                      value: 'delete',
+                      child: Row(
+                        children: [
+                          Icon(Icons.delete, color: AppColors.error, size: 20),
+                          SizedBox(width: 8),
+                          Text('Delete Complaint'),
+                        ],
+                      ),
+                    ),
+                  ];
+                },
+                icon: Container(
+                  padding: EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.9),
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black12,
+                        blurRadius: 8,
+                        offset: Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Icon(
+                    Icons.more_vert_rounded,
+                    color: AppColors.textPrimary,
+                    size: 20,
+                  ),
+                ),
+              );
+            }),
+          ],
           flexibleSpace: FlexibleSpaceBar(
             centerTitle: true,
-            title: _showAppBarTitle 
+            title: _showAppBarTitle
                 ? Text(
                     'Complaint Details',
                     style: TextStyle(
@@ -247,7 +324,7 @@ class _ComplaintDetailsPageState extends State<ComplaintDetailsPage> {
             ),
           ),
         ),
-        
+
         // Main Content
         SliverToBoxAdapter(
           child: Padding(
@@ -261,9 +338,9 @@ class _ComplaintDetailsPageState extends State<ComplaintDetailsPage> {
                   duration: 500.ms,
                   curve: Curves.easeOut,
                 ),
-                
+
                 SizedBox(height: 24),
-                
+
                 // Title with Icon
                 Row(
                   children: [
@@ -293,9 +370,9 @@ class _ComplaintDetailsPageState extends State<ComplaintDetailsPage> {
                     ),
                   ],
                 ).animate().fadeIn(delay: 300.ms),
-                
+
                 SizedBox(height: 32),
-                
+
                 // Quick Info Cards
                 _buildQuickInfoCards(complaint).animate().slideY(
                   begin: 0.5,
@@ -303,28 +380,65 @@ class _ComplaintDetailsPageState extends State<ComplaintDetailsPage> {
                   delay: 400.ms,
                   curve: Curves.easeOut,
                 ),
-                
+
                 SizedBox(height: 32),
-                
+
                 // Description Card
-                _buildDescriptionCard(complaint).animate().fadeIn(delay: 500.ms),
-                
+                _buildDescriptionCard(
+                  complaint,
+                ).animate().fadeIn(delay: 500.ms),
+
                 SizedBox(height: 32),
-                
+
                 // Location Card
                 _buildLocationCard(complaint).animate().fadeIn(delay: 600.ms),
-                
+
                 SizedBox(height: 32),
-                
+
                 // Dates Card
                 _buildDatesCard(complaint).animate().fadeIn(delay: 700.ms),
-                
+
                 SizedBox(height: 32),
-                
+
                 // Additional Info Card
-                _buildAdditionalInfoCard(complaint).animate().fadeIn(delay: 800.ms),
-                
+                _buildAdditionalInfoCard(
+                  complaint,
+                ).animate().fadeIn(delay: 800.ms),
+
+                _buildAttachmentsCard(
+                  complaint,
+                ).animate().fadeIn(delay: 900.ms),
+
                 SizedBox(height: 48),
+              ],
+            ),
+          ),
+        ),
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // ... بطاقة الحالة والبطاقات الأخرى
+                SizedBox(height: 32),
+
+                // Description Card
+                _buildDescriptionCard(
+                  complaint,
+                ).animate().fadeIn(delay: 500.ms),
+
+                SizedBox(height: 32),
+
+                // Notes Card (الجديدة)
+                _buildNotesCard(complaint).animate().fadeIn(delay: 600.ms),
+
+                SizedBox(height: 32),
+
+                // Location Card
+                _buildLocationCard(complaint).animate().fadeIn(delay: 700.ms),
+
+                // ... بقية البطاقات مع تعديل التأخيرات
               ],
             ),
           ),
@@ -332,10 +446,10 @@ class _ComplaintDetailsPageState extends State<ComplaintDetailsPage> {
       ],
     );
   }
-  
+
   Widget _buildStatusBadge(String status) {
     final statusConfig = _getStatusConfig(status);
-    
+
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
@@ -349,11 +463,7 @@ class _ComplaintDetailsPageState extends State<ComplaintDetailsPage> {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            statusConfig.icon,
-            color: statusConfig.color,
-            size: 16,
-          ),
+          Icon(statusConfig.icon, color: statusConfig.color, size: 16),
           SizedBox(width: 8),
           Text(
             statusConfig.label,
@@ -368,7 +478,8 @@ class _ComplaintDetailsPageState extends State<ComplaintDetailsPage> {
       ),
     );
   }
-  
+
+  // في complaint_details_page.dart
   Widget _buildQuickInfoCards(Complaint complaint) {
     return Container(
       decoration: BoxDecoration(
@@ -386,12 +497,14 @@ class _ComplaintDetailsPageState extends State<ComplaintDetailsPage> {
         padding: EdgeInsets.all(16),
         child: Column(
           children: [
-            // Category
+            // Category - استخدام اسم النوع بدلاً من الرقم
             _buildInfoRow(
               icon: Icons.category_rounded,
               iconColor: AppColors.primary,
               label: 'Category',
-              value: complaint.category,
+              value: complaint.complaintTypeName.isNotEmpty
+                  ? complaint.complaintTypeName
+                  : controller.getComplaintTypeName(complaint.complaintType),
             ),
             Divider(height: 24, color: AppColors.border),
             // Priority
@@ -402,19 +515,21 @@ class _ComplaintDetailsPageState extends State<ComplaintDetailsPage> {
               value: complaint.priority.toUpperCase(),
             ),
             Divider(height: 24, color: AppColors.border),
-            // Complaint ID
+            // Government Entity - استخدام اسم الجهة بدلاً من الرقم
             _buildInfoRow(
-              icon: Icons.numbers_rounded,
-              iconColor: AppColors.textSecondary,
-              label: 'Complaint ID',
-              value: complaint.id,
+              icon: Icons.business_rounded,
+              iconColor: Colors.blueAccent,
+              label: 'Government Entity',
+              value: complaint.entityName.isNotEmpty
+                  ? complaint.entityName
+                  : controller.getEntityName(complaint.entityId),
             ),
           ],
         ),
       ),
     );
   }
-  
+
   Widget _buildDescriptionCard(Complaint complaint) {
     return Container(
       width: double.infinity,
@@ -436,11 +551,7 @@ class _ComplaintDetailsPageState extends State<ComplaintDetailsPage> {
           children: [
             Row(
               children: [
-                Icon(
-                  Icons.subject_rounded,
-                  color: AppColors.primary,
-                  size: 20,
-                ),
+                Icon(Icons.subject_rounded, color: AppColors.primary, size: 20),
                 SizedBox(width: 12),
                 Text(
                   'Description',
@@ -466,7 +577,7 @@ class _ComplaintDetailsPageState extends State<ComplaintDetailsPage> {
       ),
     );
   }
-  
+
   Widget _buildLocationCard(Complaint complaint) {
     return Container(
       width: double.infinity,
@@ -536,10 +647,10 @@ class _ComplaintDetailsPageState extends State<ComplaintDetailsPage> {
       ),
     );
   }
-  
+
   Widget _buildDatesCard(Complaint complaint) {
     final dateFormat = DateFormat('MMM dd, yyyy - hh:mm a');
-    
+
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -604,7 +715,7 @@ class _ComplaintDetailsPageState extends State<ComplaintDetailsPage> {
       ),
     );
   }
-  
+
   Widget _buildAdditionalInfoCard(Complaint complaint) {
     return Container(
       width: double.infinity,
@@ -644,13 +755,19 @@ class _ComplaintDetailsPageState extends State<ComplaintDetailsPage> {
                 ),
                 _buildInfoChip(
                   icon: Icons.business_rounded,
-                  label: 'Entity ID',
-                  value: complaint.entityId.toString(),
+                  label: 'Entity',
+                  value: complaint.entityName.isNotEmpty
+                      ? complaint.entityName
+                      : controller.getEntityName(complaint.entityId),
                 ),
                 _buildInfoChip(
                   icon: Icons.type_specimen_rounded,
-                  label: 'Type ID',
-                  value: complaint.complaintType.toString(),
+                  label: 'Type',
+                  value: complaint.complaintTypeName.isNotEmpty
+                      ? complaint.complaintTypeName
+                      : controller.getComplaintTypeName(
+                          complaint.complaintType,
+                        ),
                 ),
                 if (complaint.locked)
                   _buildInfoChip(
@@ -666,7 +783,7 @@ class _ComplaintDetailsPageState extends State<ComplaintDetailsPage> {
       ),
     );
   }
-  
+
   Widget _buildInfoRow({
     required IconData icon,
     required Color iconColor,
@@ -690,10 +807,7 @@ class _ComplaintDetailsPageState extends State<ComplaintDetailsPage> {
             children: [
               Text(
                 label,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: AppColors.textSecondary,
-                ),
+                style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
               ),
               SizedBox(height: 4),
               Text(
@@ -710,7 +824,208 @@ class _ComplaintDetailsPageState extends State<ComplaintDetailsPage> {
       ],
     );
   }
-  
+
+  // complaint_details_page.dart
+  Widget _buildNotesCard(Complaint complaint) {
+    // طباعة للمساعدة في التصحيح
+    print('=== NOTES DEBUG ===');
+    print('Complaint notes length: ${complaint.notes.length}');
+    print('Complaint notes: ${complaint.notes}');
+    print('Full description: ${complaint.description}');
+    print('==================');
+
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 20,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Icon(
+                      Icons.note_rounded,
+                      color: Colors.orangeAccent,
+                      size: 20,
+                    ),
+                    SizedBox(width: 12),
+                    Text(
+                      'Notes (${complaint.notes.length})',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                  ],
+                ),
+                IconButton(
+                  icon: Icon(Icons.add, color: AppColors.primary),
+                  onPressed: () {
+                    _showAddNoteDialog(complaint.id.toString());
+                  },
+                ),
+              ],
+            ),
+            SizedBox(height: 16),
+
+            if (complaint.notes.isEmpty)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 16.0),
+                child: Text(
+                  'No notes added yet.',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: AppColors.textSecondary,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+              )
+            else
+              ...complaint.notes.asMap().entries.map((entry) {
+                final index = entry.key;
+                final note = entry.value;
+                return _buildNoteItem(note, index, complaint.id.toString());
+              }).toList(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNoteItem(String note, int index, String complaintId) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Icon(Icons.circle, size: 8, color: AppColors.primary),
+                  SizedBox(width: 8),
+                  Text(
+                    'Note ${index + 1}',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                ],
+              ),
+              PopupMenuButton<String>(
+                onSelected: (value) {
+                  if (value == 'delete') {}
+                },
+                itemBuilder: (context) => [
+                  PopupMenuItem(
+                    value: 'delete',
+                    child: Row(
+                      children: [
+                        Icon(Icons.delete, color: AppColors.error, size: 20),
+                        SizedBox(width: 8),
+                        Text('Delete Note'),
+                      ],
+                    ),
+                  ),
+                ],
+                icon: Icon(
+                  Icons.more_vert,
+                  size: 20,
+                  color: AppColors.textSecondary,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 8),
+          Container(
+            padding: EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: AppColors.background,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: AppColors.border),
+            ),
+            child: Text(
+              note,
+              style: TextStyle(
+                fontSize: 16,
+                color: AppColors.textSecondary,
+                height: 1.6,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showAddNoteDialog(String complaintId) {
+    final TextEditingController noteController = TextEditingController();
+
+    Get.dialog(
+      AlertDialog(
+        title: Text('Add Note'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('Add a new note to this complaint:'),
+            SizedBox(height: 16),
+            TextFormField(
+              controller: noteController,
+              maxLines: 5,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                hintText: 'Enter your note here...',
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: Text(
+              'Cancel',
+              style: TextStyle(color: AppColors.textSecondary),
+            ),
+          ),
+          TextButton(
+            onPressed: () async {
+              final note = noteController.text.trim();
+              if (note.isNotEmpty) {
+                Get.back();
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  controller.addNoteToComplaint(complaintId, note);
+                });
+              } else {
+                _showErrorMessage('Error', 'Note cannot be empty');
+              }
+            },
+            child: Text('Add Note', style: TextStyle(color: AppColors.primary)),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildTimelineItem({
     required IconData icon,
     required Color iconColor,
@@ -743,10 +1058,7 @@ class _ComplaintDetailsPageState extends State<ComplaintDetailsPage> {
               SizedBox(height: 4),
               Text(
                 date,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: AppColors.textSecondary,
-                ),
+                style: TextStyle(fontSize: 14, color: AppColors.textSecondary),
               ),
             ],
           ),
@@ -754,7 +1066,7 @@ class _ComplaintDetailsPageState extends State<ComplaintDetailsPage> {
       ],
     );
   }
-  
+
   Widget _buildInfoChip({
     required IconData icon,
     required String label,
@@ -799,7 +1111,400 @@ class _ComplaintDetailsPageState extends State<ComplaintDetailsPage> {
       ),
     );
   }
-  
+
+  void _showEditDescriptionDialog(
+    String complaintId,
+    String currentDescription,
+  ) {
+    final TextEditingController descriptionController = TextEditingController(
+      text: currentDescription,
+    );
+
+    Get.dialog(
+      AlertDialog(
+        title: Text('Edit Description'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('Update the complaint description:'),
+            SizedBox(height: 16),
+            TextFormField(
+              controller: descriptionController,
+              maxLines: 5,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                hintText: 'Enter new description',
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: Text(
+              'Cancel',
+              style: TextStyle(color: AppColors.textSecondary),
+            ),
+          ),
+          TextButton(
+            onPressed: () async {
+              final newDescription = descriptionController.text.trim();
+              if (newDescription.isNotEmpty &&
+                  newDescription != currentDescription) {
+                Get.back();
+
+                // استخدام WidgetsBinding لإضافة تأخير صغير
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  controller.updateComplaintDescription(
+                    complaintId,
+                    newDescription,
+                  );
+                });
+              } else if (newDescription == currentDescription) {
+                Get.back();
+                // استخدم SafeSnackbar بدلاً من Get.snackbar
+                _showInfoMessage('Info', 'No changes made');
+              } else {
+                _showErrorMessage('Error', 'Description cannot be empty');
+              }
+            },
+            child: Text('Update', style: TextStyle(color: AppColors.primary)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // حوار تأكيد الحذف
+  void _showDeleteConfirmationDialog(String complaintId) {
+    Get.dialog(
+      AlertDialog(
+        title: Text('Delete Complaint'),
+        content: Text(
+          'Are you sure you want to delete this complaint? This action cannot be undone.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: Text(
+              'Cancel',
+              style: TextStyle(color: AppColors.textSecondary),
+            ),
+          ),
+          TextButton(
+            onPressed: () async {
+              Get.back();
+
+              // استخدام WidgetsBinding لإضافة تأخير صغير
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                controller.deleteComplaint(complaintId);
+              });
+            },
+            child: Text('Delete', style: TextStyle(color: AppColors.error)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // دوال مساعدة للرسائل
+  void _showErrorMessage(String title, String message) {
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      try {
+        if (Get.context != null) {
+          ScaffoldMessenger.of(Get.context!).showSnackBar(
+            SnackBar(
+              content: Text(message),
+              backgroundColor: Colors.red,
+              duration: Duration(seconds: 2),
+            ),
+          );
+        }
+      } catch (e) {
+        print('Error showing message: $e');
+      }
+    });
+  }
+
+  // ثم أضف هذه الدالة لبناء بطاقة المرفقات
+  Widget _buildAttachmentsCard(Complaint complaint) {
+    return Obx(() {
+      final controller = Get.find<ComplaintController>();
+
+      return Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 20,
+              offset: Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(Icons.attach_file, color: AppColors.primary, size: 20),
+                  SizedBox(width: 12),
+                  Text(
+                    'Attachments (${controller.attachments.length})',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 16),
+
+              if (controller.isLoadingAttachments.value)
+                Center(
+                  child: CircularProgressIndicator(color: AppColors.primary),
+                )
+              else if (controller.attachments.isEmpty)
+                Text(
+                  'No attachments available.',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: AppColors.textSecondary,
+                    fontStyle: FontStyle.italic,
+                  ),
+                )
+              else
+                GridView.builder(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    crossAxisSpacing: 12,
+                    mainAxisSpacing: 12,
+                    childAspectRatio: 1,
+                  ),
+                  itemCount: controller.attachments.length,
+                  itemBuilder: (context, index) {
+                    final attachment = controller.attachments[index];
+                    return _buildAttachmentItem(attachment, index);
+                  },
+                ),
+            ],
+          ),
+        ),
+      );
+    });
+  }
+
+  Widget _buildAttachmentItem(Map<String, dynamic> attachment, int index) {
+    final filePath = attachment['file_path']?.toString() ?? '';
+    final fileName = filePath.split('/').last;
+    final fileType = attachment['file_type']?.toString() ?? 'png';
+
+    // بناء رابط كامل للصورة
+    final cleanPath = filePath.startsWith('/')
+        ? filePath.substring(1)
+        : filePath;
+    final imageUrl = 'http://127.0.0.1:8000/storage/$cleanPath';
+    return GestureDetector(
+      onTap: () {
+        _showImageDialog(imageUrl, fileName);
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: AppColors.border),
+          color: AppColors.background,
+        ),
+        child: Stack(
+          children: [
+            // صورة المصغرة
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Image.network(
+                imageUrl,
+             
+                width: double.infinity,
+                height: double.infinity,
+                fit: BoxFit.cover,
+                loadingBuilder: (context, child, loadingProgress) {
+                  if (loadingProgress == null) return child;
+                  return Center(
+                    child: CircularProgressIndicator(
+                      value: loadingProgress.expectedTotalBytes != null
+                          ? loadingProgress.cumulativeBytesLoaded /
+                                loadingProgress.expectedTotalBytes!
+                          : null,
+                    ),
+                  );
+                },
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    color: AppColors.background,
+                    child: Icon(
+                      _getFileIcon(fileType),
+                      size: 40,
+                      color: AppColors.primary,
+                    ),
+                  );
+                },
+              ),
+            ),
+
+            // اسم الملف في الأسفل
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.6),
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(12),
+                    bottomRight: Radius.circular(12),
+                  ),
+                ),
+                child: Text(
+                  fileName,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 10,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  maxLines: 1,
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showImageDialog(String imageUrl, String fileName) {
+    Get.dialog(
+      Dialog(
+        backgroundColor: Colors.transparent,
+        child: Stack(
+          children: [
+            // صورة كاملة
+            Container(
+              constraints: BoxConstraints(
+                maxWidth: Get.width * 0.9,
+                maxHeight: Get.height * 0.8,
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: Image.network(
+                  imageUrl,
+                  fit: BoxFit.contain,
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    return Center(child: CircularProgressIndicator());
+                  },
+                  errorBuilder: (context, error, stackTrace) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.error, size: 50, color: AppColors.error),
+                          SizedBox(height: 10),
+                          Text('Failed to load image'),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+
+            // زر الإغلاق
+            Positioned(
+              top: 10,
+              right: 10,
+              child: GestureDetector(
+                onTap: () => Get.back(),
+                child: Container(
+                  padding: EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.5),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(Icons.close, color: Colors.white, size: 24),
+                ),
+              ),
+            ),
+
+            // اسم الملف في الأسفل
+            Positioned(
+              bottom: 10,
+              left: 10,
+              right: 10,
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.7),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  fileName,
+                  style: TextStyle(color: Colors.white, fontSize: 14),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  IconData _getFileIcon(String fileType) {
+    switch (fileType.toLowerCase()) {
+      case 'jpg':
+      case 'jpeg':
+      case 'png':
+      case 'gif':
+        return Icons.image;
+      case 'pdf':
+        return Icons.picture_as_pdf;
+      case 'doc':
+      case 'docx':
+        return Icons.description;
+      case 'xls':
+      case 'xlsx':
+        return Icons.table_chart;
+      default:
+        return Icons.insert_drive_file;
+    }
+  }
+
+  void _showInfoMessage(String title, String message) {
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      try {
+        if (Get.context != null) {
+          ScaffoldMessenger.of(Get.context!).showSnackBar(
+            SnackBar(
+              content: Text(message),
+              backgroundColor: Colors.blue,
+              duration: Duration(seconds: 2),
+            ),
+          );
+        }
+      } catch (e) {
+        print('Error showing message: $e');
+      }
+    });
+  }
+
   // Helper methods for status and priority
   StatusConfig _getStatusConfig(String status) {
     switch (status) {
@@ -830,7 +1535,7 @@ class _ComplaintDetailsPageState extends State<ComplaintDetailsPage> {
         );
     }
   }
-  
+
   Color _getPriorityColor(String priority) {
     switch (priority) {
       case 'high':
@@ -849,10 +1554,6 @@ class StatusConfig {
   final String label;
   final Color color;
   final IconData icon;
-  
-  StatusConfig({
-    required this.label,
-    required this.color,
-    required this.icon,
-  });
+
+  StatusConfig({required this.label, required this.color, required this.icon});
 }

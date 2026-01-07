@@ -1,3 +1,10 @@
+<IfModule mod_headers.c>
+    <FilesMatch "\.(jpg|jpeg|png|gif|webp|svg)$">
+        Header always set Access-Control-Allow-Origin "http://localhost:51266"
+        Header always set Access-Control-Allow-Methods "GET, OPTIONS"
+        Header always set Access-Control-Allow-Headers "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+    </FilesMatch>
+</IfModule>
 <IfModule mod_rewrite.c>
     <IfModule mod_negotiation.c>
         Options -MultiViews -Indexes

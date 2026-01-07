@@ -13,9 +13,7 @@ class AddNewComplaintPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Add New Complaint'),
-      ),
+      appBar: AppBar(title: Text('Add New Complaint')),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16),
         child: Form(
@@ -23,6 +21,76 @@ class AddNewComplaintPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Government Entity Dropdown
+              Text(
+                'Government Entity *',
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+              SizedBox(height: 8),
+              Obx(() {
+                if (controller.isLoadingEntities.value) {
+                  return Container(
+                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: AppColors.border),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      children: [
+                        CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            AppColors.primary,
+                          ),
+                        ),
+                        SizedBox(width: 12),
+                        Text('Loading government entities...'),
+                      ],
+                    ),
+                  );
+                }
+
+                return DropdownButtonFormField<String>(
+                  value: controller.entityId.value.isNotEmpty
+                      ? controller.entityId.value
+                      : null,
+                  items: controller.governmentEntities.map((entity) {
+                    return DropdownMenuItem(
+                      value: entity.id.toString(),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            entity.name,
+                            style: TextStyle(fontWeight: FontWeight.w500),
+                          ),
+                          
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                  onChanged: (value) => controller.setEntityId(value!),
+                  decoration: InputDecoration(
+                    hintText: 'Select government entity',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    suffixIcon: Icon(Icons.business),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please select a government entity';
+                    }
+                    return null;
+                  },
+                  isExpanded: true,
+                );
+              }),
+              SizedBox(height: 20),
+
               // Complaint Type Dropdown
               Text(
                 'Complaint Type *',
@@ -32,30 +100,57 @@ class AddNewComplaintPage extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 8),
-              Obx(() => DropdownButtonFormField<String>(
-                value: controller.complaintType.value,
-                items: controller.complaintTypes.map((type) {
-                  return DropdownMenuItem(
-                    value: type['id'],
-                    child: Text(type['name']!),
+              Obx(() {
+                if (controller.isLoadingTypes.value) {
+                  return Container(
+                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: AppColors.border),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      children: [
+                        CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            AppColors.primary,
+                          ),
+                        ),
+                        SizedBox(width: 12),
+                        Text('Loading complaint types...'),
+                      ],
+                    ),
                   );
-                }).toList(),
-                onChanged: (value) => controller.setComplaintType(value!),
-                decoration: InputDecoration(
-                  hintText: 'Select complaint type',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
+                }
+
+                return DropdownButtonFormField<String>(
+                  value: controller.complaintType.value.isNotEmpty
+                      ? controller.complaintType.value
+                      : null,
+                  items: controller.complaintTypes.map((type) {
+                    return DropdownMenuItem(
+                      value: type.id.toString(),
+                      child: Text(type.type ?? ''),
+                    );
+                  }).toList(),
+                  onChanged: (value) => controller.setComplaintType(value!),
+                  decoration: InputDecoration(
+                    hintText: 'Select complaint type',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    suffixIcon: Icon(Icons.category),
                   ),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please select a complaint type';
-                  }
-                  return null;
-                },
-              )),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please select a complaint type';
+                    }
+                    return null;
+                  },
+                );
+              }),
               SizedBox(height: 20),
-              
+
               // Location Section
               Text(
                 'Location *',
@@ -68,13 +163,19 @@ class AddNewComplaintPage extends StatelessWidget {
               Row(
                 children: [
                   Expanded(
-                    child: TextFormField(
-                      onChanged: controller.setLocation,
-                      validator: controller.validateLocation,
-                      decoration: InputDecoration(
-                        hintText: 'Enter location',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
+                    child: Obx(
+                      () => TextFormField(
+                        controller: TextEditingController(
+                          text: controller.location.value,
+                        ),
+                        onChanged: controller.setLocation,
+                        validator: controller.validateLocation,
+                        decoration: InputDecoration(
+                          hintText: 'Enter location',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          suffixIcon: Icon(Icons.location_on),
                         ),
                       ),
                     ),
@@ -88,7 +189,10 @@ class AddNewComplaintPage extends StatelessWidget {
                         height: 48,
                         child: IconButton(
                           onPressed: controller.getCurrentLocation,
-                          icon: Icon(Icons.my_location, color: AppColors.primary),
+                          icon: Icon(
+                            Icons.my_location,
+                            color: AppColors.primary,
+                          ),
                           style: IconButton.styleFrom(
                             backgroundColor: AppColors.primary.withOpacity(0.1),
                             shape: RoundedRectangleBorder(
@@ -101,14 +205,17 @@ class AddNewComplaintPage extends StatelessWidget {
                       SizedBox(height: 4),
                       Text(
                         'Current',
-                        style: TextStyle(fontSize: 10, color: AppColors.textSecondary),
+                        style: TextStyle(
+                          fontSize: 10,
+                          color: AppColors.textSecondary,
+                        ),
                       ),
                     ],
                   ),
                 ],
               ),
               SizedBox(height: 20),
-              
+
               // Description
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -121,33 +228,38 @@ class AddNewComplaintPage extends StatelessWidget {
                     maxLines: 5,
                   ),
                   SizedBox(height: 4),
-                  Obx(() => Text(
-                    '${controller.description.value.length} characters',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: AppColors.textSecondary,
+                  Obx(
+                    () => Text(
+                      '${controller.description.value.length} characters',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: AppColors.textSecondary,
+                      ),
                     ),
-                  )),
+                  ),
                 ],
               ),
               SizedBox(height: 20),
-              
+
               // Attachment Section (Optional)
               _buildAttachmentSection(),
               SizedBox(height: 30),
-              
-              // Submit Button - FIXED: Remove .value from isFormValid
-              Obx(() => CustomButton(
-                text: 'Submit Complaint',
-                onPressed: controller.isFormValid && !controller.isLoading.value
-                    ? () {
-                        if (_formKey.currentState!.validate()) {
-                          controller.submitComplaint();
+
+              // Submit Button
+              Obx(
+                () => CustomButton(
+                  text: 'Submit Complaint',
+                  onPressed:
+                      controller.isFormValid && !controller.isLoading.value
+                      ? () {
+                          if (_formKey.currentState!.validate()) {
+                            controller.submitComplaint();
+                          }
                         }
-                      }
-                    : null,
-                isLoading: controller.isLoading.value,
-              )),
+                      : null,
+                  isLoading: controller.isLoading.value,
+                ),
+              ),
             ],
           ),
         ),
@@ -167,7 +279,7 @@ class AddNewComplaintPage extends StatelessWidget {
           ),
         ),
         SizedBox(height: 8),
-        
+
         // Dashed border file picker
         Container(
           width: double.infinity,
@@ -182,17 +294,11 @@ class AddNewComplaintPage extends StatelessWidget {
           ),
           child: Column(
             children: [
-              Icon(
-                Icons.attach_file,
-                size: 48,
-                color: AppColors.textSecondary,
-              ),
+              Icon(Icons.attach_file, size: 48, color: AppColors.textSecondary),
               SizedBox(height: 8),
               Text(
                 'Attach files (Images, PDF, Documents)',
-                style: TextStyle(
-                  color: AppColors.textSecondary,
-                ),
+                style: TextStyle(color: AppColors.textSecondary),
               ),
               SizedBox(height: 12),
               CustomButton(
@@ -204,21 +310,18 @@ class AddNewComplaintPage extends StatelessWidget {
               SizedBox(height: 8),
               Text(
                 'Max 10 files, 10MB each',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: AppColors.textSecondary,
-                ),
+                style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
               ),
             ],
           ),
         ),
-        
+
         // Selected files list
         Obx(() {
           if (controller.selectedFiles.isEmpty) {
             return SizedBox();
           }
-          
+
           return Column(
             children: [
               SizedBox(height: 16),

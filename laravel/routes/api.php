@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\AttachmentController;
 use App\Http\Controllers\CitizenController;
 use App\Http\Controllers\ComplaintController;
 use App\Http\Controllers\EmployeeController;
@@ -10,8 +9,14 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ActivityController;
+use App\Http\Controllers\AttachmentController;
 
-
+Route::options('{any}', function() {
+    return response()->json([], 200)
+        ->header('Access-Control-Allow-Origin', '*')
+        ->header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
+        ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+})->where('any', '.*');
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -33,7 +38,7 @@ Route::post('admins/login', [AdminController::class, 'login'])
     ->middleware('LogUserActivity');
 
 Route::post('admins/refresh', [AdminController::class, 'refresh']);
-Route::get('admins/CheckUser', [AdminController::class,'CheckUser'])
+Route::get('admins/CheckUser', [AdminController::class, 'CheckUser'])
     ->middleware('admin');
 
 Route::post('citizens/register', [CitizenController::class, 'register'])
@@ -82,7 +87,7 @@ Route::put('attachments/{id}', [AttachmentController::class, 'update'])
 */
 Route::get('citizen', [CitizenController::class, 'index'])
     ->middleware('auth:api');
-Route::get('citizen/CheckUser', [CitizenController::class,'CheckUser'])
+Route::get('citizen/CheckUser', [CitizenController::class, 'CheckUser'])
     ->middleware('citizen');
 Route::get('citizen/{id}', [CitizenController::class, 'getById'])
     ->middleware('auth:api');
@@ -118,8 +123,10 @@ Route::post('complaints/addType', [ComplaintController::class, 'storeType'])
 
 Route::get('Alltypes', [ComplaintController::class, 'getAllTypes']);
 
+Route::delete('/complaint-types/{id}', [ComplaintController::class, 'deleteType']);
 
-    
+
+
 
 Route::delete('complaints/{id}', action: [ComplaintController::class, 'delete'])
     ->middleware('citizen');
@@ -146,7 +153,7 @@ Route::put('complaints/{id}', [ComplaintController::class, 'update'])
 */
 Route::get('employees', [EmployeeController::class, 'index'])
     ->middleware('admin');
-Route::get('employees/CheckUser', [EmployeeController::class,'CheckUser'])
+Route::get('employees/CheckUser', [EmployeeController::class, 'CheckUser'])
     ->middleware('employee');
 Route::get('employees/{id}', [EmployeeController::class, 'getById'])
     ->middleware('admin');
@@ -174,3 +181,5 @@ Route::delete('governmentEntites/{id}', action: [GovernmentEntityController::cla
     ->middleware('admin');
 Route::put('governmentEntites/{id}', [GovernmentEntityController::class, 'update'])
     ->middleware('admin');
+Route::get('governmentEntites', [GovernmentEntityController::class, 'index'])
+    ->middleware('citizen');
