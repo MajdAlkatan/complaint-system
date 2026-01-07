@@ -86,19 +86,21 @@ Route::put('attachments/{id}', [AttachmentController::class, 'update'])
 *************
 */
 Route::get('citizen', [CitizenController::class, 'index'])
-    ->middleware('auth:api');
-Route::get('citizen/CheckUser', [CitizenController::class, 'CheckUser'])
+    ;//->middleware('auth:api');
+Route::get('citizen/CheckUser', [CitizenController::class,'CheckUser'])
     ->middleware('citizen');
 Route::get('citizen/{id}', [CitizenController::class, 'getById'])
-    ->middleware('auth:api');
+    ;//->middleware('auth:api');
 Route::post('citizen', [CitizenController::class, 'store']);
 //->middleware('auth:api');
 Route::post('citizens/refresh', [CitizenController::class, 'refresh']);
 //->middleware('auth:api');
 Route::delete('citizen/{id}', action: [CitizenController::class, 'delete'])
     ->middleware('auth:api');
+Route::put('citizen/{id}/lock', [CitizenController::class, 'lock'])
+    ;//->middleware('auth:api');
 Route::put('citizen/{id}', [CitizenController::class, 'update'])
-    ->middleware('auth:api');
+    ;//->middleware('auth:api');
 
 
 /*
@@ -108,12 +110,14 @@ Route::put('citizen/{id}', [CitizenController::class, 'update'])
 */
 Route::get('complaints', [ComplaintController::class, 'index'])
     ->middleware('employee');
+Route::get('complaints/{id}/history', [ComplaintController::class, 'getComplaintHistory'])
+    ;//->middleware('employee');
 Route::get('complaints/Mycomplaints', [ComplaintController::class, 'getMyComplaints'])
     ->middleware('citizen');
 Route::get('complaints/Mycomplaints/{id}', [ComplaintController::class, 'getMyComplaintById'])
     ->middleware('citizen');
 Route::get('complaints/{id}', [ComplaintController::class, 'getById'])
-    ->middleware('employee');
+    ;//->middleware('employee');
 Route::get('complaints/byRef/{num}', [ComplaintController::class, 'getByReferenceNumber'])
     ->middleware('employee');
 Route::post('complaints', [ComplaintController::class, 'store'])
@@ -127,7 +131,9 @@ Route::delete('/complaint-types/{id}', [ComplaintController::class, 'deleteType'
 
 
 
-
+    
+Route::delete('complaints/Types/{id}', action: [ComplaintController::class, 'deleteType'])
+    ;//->middleware('auth:api');
 Route::delete('complaints/{id}', action: [ComplaintController::class, 'delete'])
     ->middleware('citizen');
 Route::put('complaints/Mycomplaints/{id}', [ComplaintController::class, 'updateMyComplaint'])

@@ -73,7 +73,7 @@ export const useAdminAuthStore = create<AdminAuthState>()(
             console.log("Login response:", response);
 
             if (response.data && response.status === 200) {
-              const adminData = response.data.data;
+              const adminData = response.data.user;
               const accessToken = response.data.access_token;
               const refreshToken = response.data.refresh_token;
 

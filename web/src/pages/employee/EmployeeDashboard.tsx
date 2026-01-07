@@ -1,105 +1,116 @@
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { BarChart, Bell, Calendar, FileText, Shield } from "lucide-react";
 import { useEmployeeAuthStore } from "../../app/store/employee/employeeAuth.store";
 import { Button } from "../../components/ui/button";
-import { LogOut } from "lucide-react";
 
 export default function EmployeeDashboard() {
-  const { isAuthenticated, employee, logout } = useEmployeeAuthStore();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!isAuthenticated) {
-      navigate("/employee-login");
-    }
-  }, [isAuthenticated, navigate]);
-
-  const handleLogout = () => {
-    logout();
-    navigate("/employee-login");
-  };
-
-  // if (!employee) {
-  //   return (
-  //     <div className="flex items-center justify-center min-h-screen">
-  //       <div className="text-gray-500">Loading employee data...</div>
-  //     </div>
-  //   );
-  // }
+  const { employee } = useEmployeeAuthStore();
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-2xl font-bold">Employee Dashboard</h1>
-        <Button
-          variant="outline"
-          onClick={handleLogout}
-          className="flex items-center gap-2"
-        >
-          <LogOut className="w-4 h-4" />
-          Logout
-        </Button>
-      </div>
-
-      {/* <div className="bg-white rounded-lg shadow p-6">
-        <h2 className="text-xl font-semibold mb-4">
-          Welcome, {employee.username}!
-        </h2>
-
-        <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <p className="text-sm text-gray-500">Email</p>
-              <p className="font-medium">{employee.email}</p>
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Position</p>
-              <p className="font-medium">{employee.position}</p>
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Employee ID</p>
-              <p className="font-medium">{employee.employee_id}</p>
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Status</p>
-              <p className="font-medium">
-                {employee.is_verified ? "Verified" : "Pending Verification"}
+    <div className="space-y-6">
+      {/* Welcome Header */}
+      <div className=" rounded-xl p-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold">
+              Welcome back, {employee?.username}! 👋
+            </h1>
+            <p className=" mt-2">
+              Here's what's happening with your complaints today.
+            </p>
+          </div>
+          <div className="hidden md:block">
+            <div className="text-right">
+              <p className="text-sm ">Employee ID</p>
+              <p className="text-xl font-mono font-bold">
+                {employee?.employee_id}
               </p>
             </div>
           </div>
+        </div>
+      </div>
 
-          <div className="mt-6">
-            <h3 className="text-lg font-semibold mb-3">Permissions</h3>
-            <div className="flex flex-wrap gap-2">
-              {employee.can_add_notes_on_complaints && (
-                <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
-                  Add Notes
-                </span>
-              )}
-              {employee.can_request_more_info_on_complaints && (
-                <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm">
-                  Request Info
-                </span>
-              )}
-              {employee.can_change_complaints_status && (
-                <span className="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm">
-                  Change Status
-                </span>
-              )}
-              {employee.can_view_reports && (
-                <span className="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm">
-                  View Reports
-                </span>
-              )}
-              {employee.can_export_data && (
-                <span className="px-3 py-1 bg-red-100 text-red-800 rounded-full text-sm">
-                  Export Data
-                </span>
-              )}
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="bg-white rounded-xl p-6 shadow-sm border">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-500">Assigned Complaints</p>
+              <p className="text-2xl font-bold mt-2">24</p>
+            </div>
+            <div className="p-3 bg-blue-50 rounded-lg">
+              <FileText className="h-6 w-6 text-blue-600" />
             </div>
           </div>
+          <p className="text-xs text-gray-500 mt-4">+2 from yesterday</p>
         </div>
-      </div> */}
+
+        <div className="bg-white rounded-xl p-6 shadow-sm border">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-500">Pending Review</p>
+              <p className="text-2xl font-bold mt-2">8</p>
+            </div>
+            <div className="p-3 bg-amber-50 rounded-lg">
+              <Bell className="h-6 w-6 text-amber-600" />
+            </div>
+          </div>
+          <p className="text-xs text-gray-500 mt-4">Require attention</p>
+        </div>
+
+        <div className="bg-white rounded-xl p-6 shadow-sm border">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-500">Resolved Today</p>
+              <p className="text-2xl font-bold mt-2">5</p>
+            </div>
+            <div className="p-3 bg-green-50 rounded-lg">
+              <Shield className="h-6 w-6 text-green-600" />
+            </div>
+          </div>
+          <p className="text-xs text-gray-500 mt-4">+3 from yesterday</p>
+        </div>
+
+        <div className="bg-white rounded-xl p-6 shadow-sm border">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-500">Avg. Response Time</p>
+              <p className="text-2xl font-bold mt-2">4.2h</p>
+            </div>
+            <div className="p-3 bg-purple-50 rounded-lg">
+              <BarChart className="h-6 w-6 text-purple-600" />
+            </div>
+          </div>
+          <p className="text-xs text-gray-500 mt-4">-0.5h from last week</p>
+        </div>
+      </div>
+
+      {/* Recent Activity & Quick Actions */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2">
+          <div className="bg-white rounded-xl p-6 shadow-sm border">
+            <h2 className="text-lg font-semibold mb-4">Recent Activity</h2>
+            {/* Activity list would go here */}
+          </div>
+        </div>
+
+        <div className="bg-white rounded-xl p-6 shadow-sm border">
+          <h2 className="text-lg font-semibold mb-4">Quick Actions</h2>
+          <div className="space-y-3">
+            <Button className="w-full justify-start" variant="outline">
+              <FileText className="mr-2 h-4 w-4" />
+              New Complaint Note
+            </Button>
+            <Button className="w-full justify-start" variant="outline">
+              <BarChart className="mr-2 h-4 w-4" />
+              Generate Report
+            </Button>
+            <Button className="w-full justify-start" variant="outline">
+              <Calendar className="mr-2 h-4 w-4" />
+              Schedule Follow-up
+            </Button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
