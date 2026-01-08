@@ -131,8 +131,11 @@ Route::get('Alltypes', [ComplaintController::class, 'getAllTypes']);
 Route::delete('/complaint-types/{id}', [ComplaintController::class, 'deleteType']);
 
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> 4f935bed23b3bea0843473e305d94ceba05da0e9
 
     
 Route::delete('complaints/Types/{id}', action: [ComplaintController::class, 'deleteType'])
