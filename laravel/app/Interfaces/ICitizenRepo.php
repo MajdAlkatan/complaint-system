@@ -5,6 +5,7 @@ namespace App\Interfaces;
 interface ICitizenRepo
 {
     public function getAll();
+     public function getActiveCnt();
     public function getById($id);
     public function getWhereEq($col,$data);
     public function getFirstEq($col,$data);

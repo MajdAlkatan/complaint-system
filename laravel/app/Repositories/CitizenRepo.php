@@ -11,6 +11,9 @@ class CitizenRepo implements ICitizenRepo
     public function getAll(){
         return Citizen::all();
     }
+    public function getActiveCnt(){
+        return Citizen::where("locked_until",null)->orWhere('locked_until', '<', now())->count();
+    }
     public function getById($id){
         return Citizen::findOrFail($id);
     }

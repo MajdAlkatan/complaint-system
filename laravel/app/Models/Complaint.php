@@ -22,6 +22,7 @@ class Complaint extends Model
         'location',
         'description',
         'status',
+        'priority',
         'completed_at',
         'locked',
         'locked_by_employee_id',

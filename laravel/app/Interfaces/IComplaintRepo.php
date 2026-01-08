@@ -5,6 +5,7 @@ namespace App\Interfaces;
 interface IComplaintRepo
 {
     public function getAll();
+    public function getCount();
     public function getById($id);
     public function getWhereEq($col,$data);
     public function getFirstEq($col,$data);
@@ -13,4 +14,11 @@ interface IComplaintRepo
     public function insert(array $data);
     public function update($id , array $data);
     public function delete($id);
+
+
+    public function getPendingCnt();
+    public function getInProgressCnt();
+    public function getResolvedCnt();
+    public function getClosedCnt();
+    public function getRejectedCnt();
 }

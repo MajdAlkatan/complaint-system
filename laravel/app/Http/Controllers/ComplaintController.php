@@ -2,9 +2,13 @@
 ///app/Http/Controller/ComplaintController.php
 namespace App\Http\Controllers;
 
+use App\Interfaces\ICitizenRepo;
 use App\Interfaces\IComplaintRepo;
 use App\Interfaces\IComplaintTypeRepo;
+use App\Interfaces\IEmployeeRepo;
+use App\Models\Complaint;
 use Cache;
+use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Broadcast;
 use App\Events\MyEvent;
@@ -15,9 +19,13 @@ class ComplaintController extends Controller
 {
     private Pusher $pusher;
     private IComplaintRepo $complaintRepo;
+    private ICitizenRepo $citizenRepo;
     private IComplaintTypeRepo $complaintTypeRepo;
-    public function __construct(IComplaintRepo $complaintRepo1, IComplaintTypeRepo $complaintTypeRepo1)
+    private IEmployeeRepo $employeeRepo;
+    public function __construct(IComplaintRepo $complaintRepo1, IComplaintTypeRepo $complaintTypeRepo1, ICitizenRepo $citizenRepo1, IEmployeeRepo $employeeRepo1)
     {
+        $this->employeeRepo = $employeeRepo1;
+        $this->citizenRepo = $citizenRepo1;
         $this->complaintRepo = $complaintRepo1;
         $this->complaintTypeRepo = $complaintTypeRepo1;
         $this->pusher = Broadcast::connection('pusher')->getPusher();
@@ -170,7 +178,16 @@ class ComplaintController extends Controller
         $this->pusher->trigger('User' . auth()->guard('employee')->id(), 'Update Complaint', ['message' => 'complaint have been updated by employee ']);
         return response()->json(['message' => 'The data has been updated succesfully ']);
     }
+    public function editPriority($id, Request $request)
+    {
+        $complaint = $this->complaintRepo->getById($id);
+        if ($complaint->locked == true && $complaint->locked_by_employee_id != auth()->guard('employee')->id())
+            return response()->json(['message' => 'this complaint is locked'], 400);
 
+        $this->complaintRepo->update($id, $request->only(['priority']));
+        $this->pusher->trigger('User' . $complaint->citizen_id, 'Edit Complaint Priority', ['message' => 'complaint Priority have been updated by employee ']);
+        return response()->json(['message' => 'The data has been updated succesfully ']);
+    }
 
     public function lock($id)
     {
@@ -233,4 +250,60 @@ class ComplaintController extends Controller
 
         return response()->json($formattedHistory);
     }
+
+
+
+
+    //Overview
+
+public function getOverview()
+    {
+        return response()->json([
+            'summary' => [
+                'total_complaints' => $this->complaintRepo->getCount(),
+                'active_citizens'  => $this->citizenRepo->getActiveCnt(),
+                'total_employees'  => $this->employeeRepo->getCount(),
+                'resolution_rate'  => 87, // عملية حسابية: (Resolved / Total) * 100
+            ],
+
+            // 2. حالة الشكاوى (Complaints by Status)
+            'status_stats' => [
+                'pending'     => $this->complaintRepo->getPendingCnt(),
+                'in_progress' => $this->complaintRepo->getInProgressCnt(),
+                'resolved'    => $this->complaintRepo->getResolvedCnt(),
+                'closed'      => $this->complaintRepo->getClosedCnt(),
+                'rejected'    => $this->complaintRepo->getRejectedCnt(),
+            ],
+/*
+            // 3. الأولويات (Complaints by Priority)
+            'priority_stats' => [
+                'low'    => Complaint::where('priority', 'low')->count(),
+                'medium' => Complaint::where('priority', 'medium')->count(),
+                'high'   => Complaint::where('priority', 'high')->count(),
+                'urgent' => Complaint::where('priority', 'urgent')->count(),
+            ],
+
+            // 4. التوجهات الشهرية (Monthly Trends - الرسم البياني)
+            'monthly_trends' => $this->getMonthlyTrends(),
+            */
+        ]);
+    }
+
+    private function getMonthlyTrends()
+    {
+        // جلب عدد الشكاوى لكل شهر خلال السنة الحالية
+        return Complaint::select(
+            DB::raw('count(id) as count'),
+            DB::raw("DATE_FORMAT(created_at, '%b') as month")
+        )
+            ->whereYear('created_at', date('Year'))
+            ->groupBy('month')
+            ->orderBy('created_at')
+            ->get();
+    }
+    
+
+
+
+
 }

@@ -11,6 +11,9 @@ class EmployeeRepo implements IEmployeeRepo
     public function getAll(){
         return Employee::all();
     }
+    public function getCount(){
+        return Employee::count();
+    }
     public function getById($id){
         return Employee::findOrFail($id);
     }

@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ActivityController;
 
-
+Route::get('analytics', [ComplaintController::class, 'getOverview']);
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -121,6 +121,8 @@ Route::post('complaints/addType', [ComplaintController::class, 'storeType'])
     ->middleware(middleware: 'admin');
 
 Route::get('Alltypes', [ComplaintController::class, 'getAllTypes']);
+
+
 
 
     
