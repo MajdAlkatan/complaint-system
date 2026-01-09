@@ -131,7 +131,10 @@ import {
   DropdownMenuTrigger,
 } from "../../../components/ui/dropdown-menu";
 
-import { useAdminAuthStore } from "../../../app/store/admin/adminAuth.store";
+import {
+  checkAdminAuthStatus,
+  useAdminAuthStore,
+} from "../../../app/store/admin/adminAuth.store";
 import { cn } from "../../../lib/utils";
 
 // Define TypeScript interfaces
@@ -152,11 +155,38 @@ const AdminLayout = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
 
+  const [authChecked, setAuthChecked] = useState(false);
+
   useEffect(() => {
-    if (!isAuthenticated) {
-      navigate("/admin-login");
-    }
-  }, [isAuthenticated, navigate]);
+    const checkAuth = async () => {
+      if (!authChecked) {
+        try {
+          if (isAuthenticated || localStorage.getItem("accessToken")) {
+            console.log("Checking user authentication...");
+            const isAuthValid = await checkAdminAuthStatus();
+
+            if (!isAuthValid) {
+              console.log("Authentication invalid, redirecting to login...");
+              logout();
+              navigate("/admin-login");
+              return;
+            }
+          } else {
+            navigate("/admin-login");
+            return;
+          }
+        } catch (error) {
+          console.error("Error checking authentication:", error);
+          logout();
+          navigate("/admin-login");
+        } finally {
+          setAuthChecked(true);
+        }
+      }
+    };
+
+    checkAuth();
+  }, [navigate, isAuthenticated, logout, authChecked]);
 
   useEffect(() => {
     // Fetch notifications (mock data for now)

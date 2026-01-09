@@ -10,6 +10,7 @@ interface AdminAuthState {
   refreshToken: string | null;
   isLoading: boolean;
   error: string | null;
+  isCheckingAuth: boolean;
 
   setIsAuthenticated: (value: boolean) => void;
   setAdmin: (admin: Admin | null) => void;
@@ -17,6 +18,7 @@ interface AdminAuthState {
   setRefreshToken: (token: string | null) => void;
   setIsLoading: (value: boolean) => void;
   setError: (error: string | null) => void;
+  setIsCheckingAuth: (value: boolean) => void;
 
   // Actions
   login: (email: string, password: string) => Promise<void>;
@@ -24,6 +26,7 @@ interface AdminAuthState {
   clearError: () => void;
 
   refreshAccessToken: () => Promise<boolean>;
+  checkUser: () => Promise<boolean>; // New function
 }
 
 interface Admin {
@@ -51,6 +54,7 @@ export const useAdminAuthStore = create<AdminAuthState>()(
         refreshToken: null,
         isLoading: false,
         error: null,
+        isCheckingAuth: false,
 
         // Setters
         setIsAuthenticated: (value) => set({ isAuthenticated: value }),
@@ -59,6 +63,7 @@ export const useAdminAuthStore = create<AdminAuthState>()(
         setRefreshToken: (token) => set({ refreshToken: token }),
         setIsLoading: (value) => set({ isLoading: value }),
         setError: (error) => set({ error }),
+        setIsCheckingAuth: (value) => set({ isCheckingAuth: value }),
 
         // Actions
         login: async (email: string, password: string) => {
@@ -110,6 +115,60 @@ export const useAdminAuthStore = create<AdminAuthState>()(
             });
 
             return Promise.reject(errorMessage);
+          }
+        },
+
+        // New checkUser function
+        checkUser: async (): Promise<boolean> => {
+          try {
+            const { accessToken, logout } = get();
+
+            if (!accessToken) {
+              console.log("No access token available");
+              return false;
+            }
+
+            set({ isCheckingAuth: true, error: null });
+
+            // Make API call to check user authentication
+            const response = await axiosInstance.get("/admins/CheckUser", {
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+              },
+            });
+
+            console.log("CheckUser response:", response);
+
+            if (response.data && response.status === 200) {
+              // User is authenticated
+              set({
+                isCheckingAuth: false,
+                error: null,
+              });
+              return true;
+            } else {
+              throw new Error("Authentication check failed");
+            }
+          } catch (error: any) {
+            console.error("CheckUser error:", error);
+
+            const errorMessage =
+              error.response?.data?.message ||
+              error.message ||
+              "Authentication check failed";
+
+            // If error is 401 (Unauthorized), try to refresh token
+            if (error.response?.status === 401) {
+              const { refreshAccessToken } = get();
+              const refreshed = await refreshAccessToken();
+
+              if (refreshed) {
+                const retryResult = await get().checkUser();
+                return retryResult;
+              }
+            }
+
+            return false;
           }
         },
 
@@ -183,6 +242,10 @@ export const useAdminAuthStore = create<AdminAuthState>()(
   )
 );
 
+export const checkAdminAuthStatus = async (): Promise<boolean> => {
+  const { checkUser } = useAdminAuthStore.getState();
+  return await checkUser();
+};
 // Helper function to check if user is logged in
 export const checkAdminAuth = (): boolean => {
   const { isAuthenticated, accessToken } = useAdminAuthStore.getState();

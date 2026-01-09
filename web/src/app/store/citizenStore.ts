@@ -272,7 +272,7 @@ export const useCitizenStore = create<CitizenStore>()(
       },
 
       getStatusColor: (status: string) => {
-        switch (status.toLowerCase()) {
+        switch (status?.toLowerCase()) {
           case "active":
             return "bg-green-100 text-green-800";
           case "suspended":
@@ -285,7 +285,7 @@ export const useCitizenStore = create<CitizenStore>()(
       },
 
       getStatusText: (status: string) => {
-        switch (status.toLowerCase()) {
+        switch (status?.toLowerCase()) {
           case "active":
             return "Active";
           case "suspended":
@@ -298,7 +298,7 @@ export const useCitizenStore = create<CitizenStore>()(
       },
 
       getGenderText: (gender: string) => {
-        switch (gender.toLowerCase()) {
+        switch (gender?.toLowerCase()) {
           case "male":
             return "Male";
           case "female":

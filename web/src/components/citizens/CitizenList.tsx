@@ -66,7 +66,7 @@ const CitizenList = () => {
 
   const filteredCitizens = citizens.filter((citizen) => {
     const matchesSearch =
-      citizen.national_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      citizen?.national_id?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       citizen.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       citizen.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
       citizen.phone_number.includes(searchTerm);
