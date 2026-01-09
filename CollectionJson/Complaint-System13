@@ -1,0 +1,1954 @@
+{
+	"info": {
+		"_postman_id": "4afa1f43-1440-49ba-bbab-57c7c5971bd3",
+		"name": "Complaint-System",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "47033207",
+		"_collection_link": "https://flight-physicist-19539265-691749.postman.co/workspace/Mohammad-Sheikh-Omar's-Workspac~40493aef-62df-4c7d-87d9-e71af3dd4bbd/collection/47033207-4afa1f43-1440-49ba-bbab-57c7c5971bd3?action=share&source=collection_link&creator=47033207"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "AdminAuth",
+					"item": [
+						{
+							"name": "AdminLogin",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"email\" : \"mhmd6@gmail.com\",\r\n    \"password\" : \"Mh12@34\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/admins/login",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"admins",
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "RefershTokenforAdmin",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"refresh_token\": \"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2FkbWlucy9sb2dpbiIsImlhdCI6MTc2NTgyMzQ4OSwiZXhwIjoxNzY3MDMzMDg5LCJuYmYiOjE3NjU4MjM0ODksImp0aSI6IlgyaGxLZEJtOTMyOWtkRHciLCJzdWIiOiIxIiwicHJ2IjoiZGY4ODNkYjk3YmQwNWVmOGZmODUwODJkNjg2YzQ1ZTgzMmU1OTNhOSIsInR5cGUiOiJyZWZyZXNoX3Rva2VuIn0.YDBxDQqeTgoRUkZElZmJ_K-l1IRiDUh9xPuW7o0peoE\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/admins/refresh",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"admins",
+										"refresh"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "AdminRegister",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"email\" : \"mhmd6@gmail.com\",\r\n    \"password\" : \"Mh12@34\",\r\n    \"password_confirmation\": \"Mh12@34\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/admins/register",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"admins",
+										"register"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetMyAccount Admin",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Authorization",
+										"value": "bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2FkbWlucy9sb2dpbiIsImlhdCI6MTc2NzIwNjQyOCwiZXhwIjoxNzY3MjEwMDI4LCJuYmYiOjE3NjcyMDY0MjgsImp0aSI6IkhqUzZ5SjNEb2lpd3g0WXciLCJzdWIiOiIxIiwicHJ2IjoiZGY4ODNkYjk3YmQwNWVmOGZmODUwODJkNjg2YzQ1ZTgzMmU1OTNhOSJ9.hw9gSV-yHq7SZMt74asKMFpZMVharjNT_Ak61mQWhuQ",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/admins/CheckUser",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"admins",
+										"CheckUser"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "EmployeeAuth",
+					"item": [
+						{
+							"name": "LoginEmployee",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Authorization",
+										"value": "bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2FkbWlucy9sb2dpbiIsImlhdCI6MTc2NTQ4MDMzNywiZXhwIjoxNzY1NDgzOTM3LCJuYmYiOjE3NjU0ODAzMzcsImp0aSI6ImZRckZHZVNFcFQ3MGpKYTEiLCJzdWIiOiIxIiwicHJ2IjoiZGY4ODNkYjk3YmQwNWVmOGZmODUwODJkNjg2YzQ1ZTgzMmU1OTNhOSJ9.g1vxlDudqChj_JL7ALkM--oRsI-tRM_snzDdKqJGRQw",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"email\" : \"mhmd9@gmail.com\",\r\n    \"password\" : \"Mh12@34\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/employees/login",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"employees",
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "RefreshTokenForEmployee",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Authorization",
+										"value": "bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2FkbWlucy9sb2dpbiIsImlhdCI6MTc2NTQ4MDMzNywiZXhwIjoxNzY1NDgzOTM3LCJuYmYiOjE3NjU0ODAzMzcsImp0aSI6ImZRckZHZVNFcFQ3MGpKYTEiLCJzdWIiOiIxIiwicHJ2IjoiZGY4ODNkYjk3YmQwNWVmOGZmODUwODJkNjg2YzQ1ZTgzMmU1OTNhOSJ9.g1vxlDudqChj_JL7ALkM--oRsI-tRM_snzDdKqJGRQw",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n\"refresh_token\": \"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2VtcGxveWVlcy9sb2dpbiIsImlhdCI6MTc2NTgyMjUwNSwiZXhwIjoxNzY3MDMyMTA0LCJuYmYiOjE3NjU4MjI1MDUsImp0aSI6Ijg1eG9zbUpKWTN6cnJKY3AiLCJzdWIiOiI1IiwicHJ2IjoiMzI5NjNhNjA2YzJmMTcxZjFjMTQzMzFlNzY5NzY2Y2Q1OTEyZWQxNSIsInR5cGUiOiJyZWZyZXNoX3Rva2VuIn0.xIwaqdITQbHnaAexFhLWFqgH1yvwGpWisqc9PLY9JUk\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/employees/refresh",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"employees",
+										"refresh"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetMyAccount Employee",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Authorization",
+										"value": "bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2VtcGxveWVlcy9sb2dpbiIsImlhdCI6MTc2NzIwNjEyOSwiZXhwIjoxNzY3MjA5NzI5LCJuYmYiOjE3NjcyMDYxMjksImp0aSI6IkE5VThMcjZZRlVjMTlicjAiLCJzdWIiOiIxIiwicHJ2IjoiMzI5NjNhNjA2YzJmMTcxZjFjMTQzMzFlNzY5NzY2Y2Q1OTEyZWQxNSJ9.Jdi8eQnvykjM0YjMrGjcdxxTs-7xhNz8Of_Kljbl8kE",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/employees/CheckUser",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"employees",
+										"CheckUser"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "AddEmployee",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Authorization",
+										"value": "bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2FkbWlucy9sb2dpbiIsImlhdCI6MTc2NTQ4MDMzNywiZXhwIjoxNzY1NDgzOTM3LCJuYmYiOjE3NjU0ODAzMzcsImp0aSI6ImZRckZHZVNFcFQ3MGpKYTEiLCJzdWIiOiIxIiwicHJ2IjoiZGY4ODNkYjk3YmQwNWVmOGZmODUwODJkNjg2YzQ1ZTgzMmU1OTNhOSJ9.g1vxlDudqChj_JL7ALkM--oRsI-tRM_snzDdKqJGRQw",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\" : \"Mohammad Sheikh Omar\",\r\n    \"email\" : \"mhmd7@gmail.com\",\r\n    \"password\" : \"Mh12@34\",\r\n    \"password_confirmation\": \"Mh12@34\",\r\n    \"government_entity_id\" : 1,\r\n    \"position\" : \"position1\",\r\n    \"can_add_notes_on_complaints\" : 1,\r\n    \"can_request_more_info_on_complaints\" : 1,\r\n    \"can_change_complaints_status\" : 1,\r\n    \"can_view_reports\" : 1,\r\n    \"can_export_data\" : 1\r\n\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/employees/add",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"employees",
+										"add"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "EditEmployee",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Authorization",
+										"value": "bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2FkbWlucy9sb2dpbiIsImlhdCI6MTc2NTQ4MDMzNywiZXhwIjoxNzY1NDgzOTM3LCJuYmYiOjE3NjU0ODAzMzcsImp0aSI6ImZRckZHZVNFcFQ3MGpKYTEiLCJzdWIiOiIxIiwicHJ2IjoiZGY4ODNkYjk3YmQwNWVmOGZmODUwODJkNjg2YzQ1ZTgzMmU1OTNhOSJ9.g1vxlDudqChj_JL7ALkM--oRsI-tRM_snzDdKqJGRQw",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"can_add_notes_on_complaints\" : 1,\r\n    \"can_request_more_info_on_complaints\" : 0,\r\n    \"can_change_complaints_status\" : 1,\r\n    \"can_view_reports\" : 1,\r\n    \"can_export_data\" : 1\r\n\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/employees/1/edit",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"employees",
+										"1",
+										"edit"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "CitizenAuth",
+					"item": [
+						{
+							"name": "CitizenRegister",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"full_name\" : \"Mohammad Sheikh Omar\",\r\n    \"birth_of_date\" : \"2003/5/2\",\r\n    \"phone\" : \"0951461446\",\r\n    \"email\" : \"mhmd5@gmail.com\",\r\n    \"password\" : \"Mh12@34\",\r\n    \"password_confirmation\": \"Mh12@34\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/citizens/register",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"citizens",
+										"register"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "CitizenLogin",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"email\" : \"mhmd5@gmail.com\",\r\n    \"password\" : \"Mh12@34\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/citizens/login",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"citizens",
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "RefreshTokenForCitizen",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Authorization",
+										"value": "bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2FkbWlucy9sb2dpbiIsImlhdCI6MTc2NTQ4MDMzNywiZXhwIjoxNzY1NDgzOTM3LCJuYmYiOjE3NjU0ODAzMzcsImp0aSI6ImZRckZHZVNFcFQ3MGpKYTEiLCJzdWIiOiIxIiwicHJ2IjoiZGY4ODNkYjk3YmQwNWVmOGZmODUwODJkNjg2YzQ1ZTgzMmU1OTNhOSJ9.g1vxlDudqChj_JL7ALkM--oRsI-tRM_snzDdKqJGRQw",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n\"refresh_token\": \"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2NpdGl6ZW5zL2xvZ2luIiwiaWF0IjoxNzY1ODMwNjM5LCJleHAiOjE3NjcwNDAyMzksIm5iZiI6MTc2NTgzMDYzOSwianRpIjoiZ29WbmFwd1p0MzJxS2wwMSIsInN1YiI6IjEiLCJwcnYiOiJlM2FjYTFjZmEzNmZiMWE1Njg5MGRhMDFmN2VlYTRlNjQ2OWI1Mzg2IiwidHlwZSI6InJlZnJlc2hfdG9rZW4ifQ.S9nfRuVeRko8uzj7q5Uk1DL758NEBo9ybj-o_al1bk0\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/citizens/refresh",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"citizens",
+										"refresh"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "CitizenRegister",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"email\" : \"mhmd6@gmail.com\",\r\n    \"password\" : \"Mh12@34\",\r\n    \"password_confirmation\": \"Mh12@34\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/admins/register",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"admins",
+										"register"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "CitizenRegister Copy",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"email\" : \"mhmd6@gmail.com\",\r\n    \"password\" : \"Mh12@34\",\r\n    \"password_confirmation\": \"Mh12@34\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/admins/register",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"admins",
+										"register"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetMyAccountCitizen",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Authorization",
+										"value": "bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2NpdGl6ZW5zL2xvZ2luIiwiaWF0IjoxNzY3MjA2NTIyLCJleHAiOjE3NjcyMTAxMjIsIm5iZiI6MTc2NzIwNjUyMiwianRpIjoiWUVKMzVVU0xDWnVNVlJjVyIsInN1YiI6IjEiLCJwcnYiOiJlM2FjYTFjZmEzNmZiMWE1Njg5MGRhMDFmN2VlYTRlNjQ2OWI1Mzg2In0.jBks3tNfx4_ywwTgu-1rsYv8UoY9u_bVFHJyBYgPQu8",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/citizen/CheckUser",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"citizen",
+										"CheckUser"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Register Copy",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"full_name\" : \"Mohammad Sheikh Omar\",\r\n    \"birth_of_date\" : \"2003/5/2\",\r\n    \"phone\" : \"0951461446\",\r\n    \"email\" : \"mhmd@gmail.com\",\r\n    \"password\" : \"Mh12@34\",\r\n    \"password_confirmation\": \"Mh12@34\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/register",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetAllActivity",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"full_name\" : \"Mohammad Sheikh Omar\",\r\n    \"birth_of_date\" : \"2003/5/2\",\r\n    \"phone\" : \"0951461446\",\r\n    \"email\" : \"mhmd@gmail.com\",\r\n    \"password\" : \"Mh12@34\",\r\n    \"password_confirmation\": \"Mh12@34\"\r\n}"
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/activities",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"activities"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Complaints",
+			"item": [
+				{
+					"name": "AddComplaint",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2NpdGl6ZW5zL2xvZ2luIiwiaWF0IjoxNzY3MDkxMTAwLCJleHAiOjE3NjcwOTQ3MDAsIm5iZiI6MTc2NzA5MTEwMCwianRpIjoiTHRsNFdPRlBmSFd6d25wRSIsInN1YiI6IjEiLCJwcnYiOiJlM2FjYTFjZmEzNmZiMWE1Njg5MGRhMDFmN2VlYTRlNjQ2OWI1Mzg2In0.rP5pqKIH6OPpmqKAia7VhQFnIKgXC2eCMj2pBtVFL3o",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"entity_id\" : 1,\r\n    \"complaint_type\" : 1,\r\n    \"location\" : \"location1\",\r\n    \"description\": \"this is a description\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/complaints",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"complaints"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetAllComplaints",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2VtcGxveWVlcy9sb2dpbiIsImlhdCI6MTc2NTYyMjc4NywiZXhwIjoxNzY1NjI2Mzg3LCJuYmYiOjE3NjU2MjI3ODcsImp0aSI6InJ1ekhsS1I1MkdQWDVkeVkiLCJzdWIiOiI1IiwicHJ2IjoiMzI5NjNhNjA2YzJmMTcxZjFjMTQzMzFlNzY5NzY2Y2Q1OTEyZWQxNSJ9.MhA826VZqMN28pz0VtKeBRaeF0cFIMFD4SaTJjDWThQ",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"entity_id\" : 1,\r\n    \"complaint_type\" : 1,\r\n    \"location\" : \"location1\",\r\n    \"description\": \"this is a description\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/complaints",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"complaints"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetComplaintsbyId",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2VtcGxveWVlcy9sb2dpbiIsImlhdCI6MTc2NTYyMjc4NywiZXhwIjoxNzY1NjI2Mzg3LCJuYmYiOjE3NjU2MjI3ODcsImp0aSI6InJ1ekhsS1I1MkdQWDVkeVkiLCJzdWIiOiI1IiwicHJ2IjoiMzI5NjNhNjA2YzJmMTcxZjFjMTQzMzFlNzY5NzY2Y2Q1OTEyZWQxNSJ9.MhA826VZqMN28pz0VtKeBRaeF0cFIMFD4SaTJjDWThQ",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"entity_id\" : 1,\r\n    \"complaint_type\" : 1,\r\n    \"location\" : \"location1\",\r\n    \"description\": \"this is a description\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/complaints/1",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"complaints",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetComplaintHistory",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2VtcGxveWVlcy9sb2dpbiIsImlhdCI6MTc2NTYyMjc4NywiZXhwIjoxNzY1NjI2Mzg3LCJuYmYiOjE3NjU2MjI3ODcsImp0aSI6InJ1ekhsS1I1MkdQWDVkeVkiLCJzdWIiOiI1IiwicHJ2IjoiMzI5NjNhNjA2YzJmMTcxZjFjMTQzMzFlNzY5NzY2Y2Q1OTEyZWQxNSJ9.MhA826VZqMN28pz0VtKeBRaeF0cFIMFD4SaTJjDWThQ",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"entity_id\" : 1,\r\n    \"complaint_type\" : 1,\r\n    \"location\" : \"location1\",\r\n    \"description\": \"this is a description\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/complaints/2/history",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"complaints",
+								"2",
+								"history"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetComplaintsbyRefernceNum",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2VtcGxveWVlcy9sb2dpbiIsImlhdCI6MTc2NTYyMjc4NywiZXhwIjoxNzY1NjI2Mzg3LCJuYmYiOjE3NjU2MjI3ODcsImp0aSI6InJ1ekhsS1I1MkdQWDVkeVkiLCJzdWIiOiI1IiwicHJ2IjoiMzI5NjNhNjA2YzJmMTcxZjFjMTQzMzFlNzY5NzY2Y2Q1OTEyZWQxNSJ9.MhA826VZqMN28pz0VtKeBRaeF0cFIMFD4SaTJjDWThQ",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"entity_id\" : 1,\r\n    \"complaint_type\" : 1,\r\n    \"location\" : \"location1\",\r\n    \"description\": \"this is a description\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/complaints/byRef/179f34af-bf71-41fd-bb3a-73ab4f8f0905",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"complaints",
+								"byRef",
+								"179f34af-bf71-41fd-bb3a-73ab4f8f0905"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "EditComplaintsbyEmployee",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2VtcGxveWVlcy9sb2dpbiIsImlhdCI6MTc2NTYyMjc4NywiZXhwIjoxNzY1NjI2Mzg3LCJuYmYiOjE3NjU2MjI3ODcsImp0aSI6InJ1ekhsS1I1MkdQWDVkeVkiLCJzdWIiOiI1IiwicHJ2IjoiMzI5NjNhNjA2YzJmMTcxZjFjMTQzMzFlNzY5NzY2Y2Q1OTEyZWQxNSJ9.MhA826VZqMN28pz0VtKeBRaeF0cFIMFD4SaTJjDWThQ",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"status\": \"pending\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/complaints/1",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"complaints",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "EditComplaintPriotiry",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2VtcGxveWVlcy9sb2dpbiIsImlhdCI6MTc2Nzk4NzY3NSwiZXhwIjoxNzY3OTkxMjc1LCJuYmYiOjE3Njc5ODc2NzUsImp0aSI6IjdDTTlOZTVBNk54aEIwUnYiLCJzdWIiOiIxIiwicHJ2IjoiMzI5NjNhNjA2YzJmMTcxZjFjMTQzMzFlNzY5NzY2Y2Q1OTEyZWQxNSJ9.tfdGQUjYSZ-K4Ooik3pRyyCJAeNs2quYCy95U_i2U-o",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"priority\": \"medium\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/complaints/2/editPriority",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"complaints",
+								"2",
+								"editPriority"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "RequestNotesFromCitizen",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2VtcGxveWVlcy9sb2dpbiIsImlhdCI6MTc2NjkxNDk5NywiZXhwIjoxNzY2OTE4NTk3LCJuYmYiOjE3NjY5MTQ5OTcsImp0aSI6Ilh4d0NneVBKdFJ2SlVkNkQiLCJzdWIiOiI1IiwicHJ2IjoiMzI5NjNhNjA2YzJmMTcxZjFjMTQzMzFlNzY5NzY2Y2Q1OTEyZWQxNSJ9.F8T26wqnCbl0SLYi2S1iWMAaMxynrsah-JNHHC6ToHU",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"message\": \"You should add some notes\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/complaints/requestNotes/1",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"complaints",
+								"requestNotes",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "LockComplaint",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2VtcGxveWVlcy9sb2dpbiIsImlhdCI6MTc2NjMwNzQ4OSwiZXhwIjoxNzY2MzExMDg5LCJuYmYiOjE3NjYzMDc0ODksImp0aSI6Im1FRWlQbmw4cEIxSGQ5Z1ciLCJzdWIiOiI1IiwicHJ2IjoiMzI5NjNhNjA2YzJmMTcxZjFjMTQzMzFlNzY5NzY2Y2Q1OTEyZWQxNSJ9.xME6dCPNxanJEC86sKfq4jBRTAWZpFeHmBMYMI9R_Dk",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"status\": \"pending\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/complaints/lock/1",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"complaints",
+								"lock",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "unLockComplaint",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2VtcGxveWVlcy9sb2dpbiIsImlhdCI6MTc2NjMwNzQ4OSwiZXhwIjoxNzY2MzExMDg5LCJuYmYiOjE3NjYzMDc0ODksImp0aSI6Im1FRWlQbmw4cEIxSGQ5Z1ciLCJzdWIiOiI1IiwicHJ2IjoiMzI5NjNhNjA2YzJmMTcxZjFjMTQzMzFlNzY5NzY2Y2Q1OTEyZWQxNSJ9.xME6dCPNxanJEC86sKfq4jBRTAWZpFeHmBMYMI9R_Dk",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"status\": \"pending\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/complaints/unLock/1",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"complaints",
+								"unLock",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "EditMyComplaint",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2NpdGl6ZW5zL2xvZ2luIiwiaWF0IjoxNzY1NjIyMTgzLCJleHAiOjE3NjU2MjU3ODMsIm5iZiI6MTc2NTYyMjE4MywianRpIjoiQXoxZlZOd2FCaURZVW1uaSIsInN1YiI6IjEiLCJwcnYiOiJlM2FjYTFjZmEzNmZiMWE1Njg5MGRhMDFmN2VlYTRlNjQ2OWI1Mzg2In0.2DVzKrGAReRmAmrkxYI-IWeuY6S71wg_VrRnyQYnNwk",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"description\": \"description 12\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/complaints/Mycomplaints/1",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"complaints",
+								"Mycomplaints",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "addNotesToMyComplaint",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2NpdGl6ZW5zL2xvZ2luIiwiaWF0IjoxNzY1NjIyMTgzLCJleHAiOjE3NjU2MjU3ODMsIm5iZiI6MTc2NTYyMjE4MywianRpIjoiQXoxZlZOd2FCaURZVW1uaSIsInN1YiI6IjEiLCJwcnYiOiJlM2FjYTFjZmEzNmZiMWE1Njg5MGRhMDFmN2VlYTRlNjQ2OWI1Mzg2In0.2DVzKrGAReRmAmrkxYI-IWeuY6S71wg_VrRnyQYnNwk",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"notes\": \"description 12\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/complaints/AddNotes/1",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"complaints",
+								"AddNotes",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AddComplaintType",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2FkbWlucy9sb2dpbiIsImlhdCI6MTc2NTYyMjEwNCwiZXhwIjoxNzY1NjI1NzA0LCJuYmYiOjE3NjU2MjIxMDQsImp0aSI6InpmanBVYjNiN3RLYWNCNmIiLCJzdWIiOiIxIiwicHJ2IjoiZGY4ODNkYjk3YmQwNWVmOGZmODUwODJkNjg2YzQ1ZTgzMmU1OTNhOSJ9.rMiMXN630qWWQE0VAcM1dJWuCfAjIqlqrM2dFWRXNws",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"type\" : \"type1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/complaints/addType",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"complaints",
+								"addType"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteType",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2FkbWlucy9sb2dpbiIsImlhdCI6MTc2NTYyMjEwNCwiZXhwIjoxNzY1NjI1NzA0LCJuYmYiOjE3NjU2MjIxMDQsImp0aSI6InpmanBVYjNiN3RLYWNCNmIiLCJzdWIiOiIxIiwicHJ2IjoiZGY4ODNkYjk3YmQwNWVmOGZmODUwODJkNjg2YzQ1ZTgzMmU1OTNhOSJ9.rMiMXN630qWWQE0VAcM1dJWuCfAjIqlqrM2dFWRXNws",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"type\" : \"type1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/complaints/Types/1",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"complaints",
+								"Types",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "GovernmentEntities",
+			"item": [
+				{
+					"name": "AddGovernmentEntity",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2FkbWlucy9sb2dpbiIsImlhdCI6MTc2NTQ4MTE4NywiZXhwIjoxNzY1NDg0Nzg3LCJuYmYiOjE3NjU0ODExODcsImp0aSI6ImJyUkI3YTlNOE1YMkdQNDUiLCJzdWIiOiIxIiwicHJ2IjoiZGY4ODNkYjk3YmQwNWVmOGZmODUwODJkNjg2YzQ1ZTgzMmU1OTNhOSJ9.L6lAsKm5h2CxXrufbV4dA0siJtT0dgxNAR23jTI2Wms",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\" : \"entity1\",\r\n    \"contact_email\" : \"mhmd7@gmail.com\",\r\n    \"description\" : \"this is a description\",\r\n    \"contact_phone\": \"0355234357\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/governmentEntites",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"governmentEntites"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Attatchment",
+			"item": [
+				{
+					"name": "StoreAttachment",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2FkbWlucy9sb2dpbiIsImlhdCI6MTc2NTQ4MDMzNywiZXhwIjoxNzY1NDgzOTM3LCJuYmYiOjE3NjU0ODAzMzcsImp0aSI6ImZRckZHZVNFcFQ3MGpKYTEiLCJzdWIiOiIxIiwicHJ2IjoiZGY4ODNkYjk3YmQwNWVmOGZmODUwODJkNjg2YzQ1ZTgzMmU1OTNhOSJ9.g1vxlDudqChj_JL7ALkM--oRsI-tRM_snzDdKqJGRQw",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "complaint_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "image",
+									"type": "file",
+									"src": "postman-cloud:///1f089e59-7e13-4400-b6eb-93957d266f6c"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/attachments",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"attachments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetAttachmentById",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2FkbWlucy9sb2dpbiIsImlhdCI6MTc2NTQ4MDMzNywiZXhwIjoxNzY1NDgzOTM3LCJuYmYiOjE3NjU0ODAzMzcsImp0aSI6ImZRckZHZVNFcFQ3MGpKYTEiLCJzdWIiOiIxIiwicHJ2IjoiZGY4ODNkYjk3YmQwNWVmOGZmODUwODJkNjg2YzQ1ZTgzMmU1OTNhOSJ9.g1vxlDudqChj_JL7ALkM--oRsI-tRM_snzDdKqJGRQw",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "complaint_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "image",
+									"type": "file",
+									"src": "postman-cloud:///1f089e59-7e13-4400-b6eb-93957d266f6c"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/attachments/1",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"attachments",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetAllAttachments",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2FkbWlucy9sb2dpbiIsImlhdCI6MTc2NTQ4MDMzNywiZXhwIjoxNzY1NDgzOTM3LCJuYmYiOjE3NjU0ODAzMzcsImp0aSI6ImZRckZHZVNFcFQ3MGpKYTEiLCJzdWIiOiIxIiwicHJ2IjoiZGY4ODNkYjk3YmQwNWVmOGZmODUwODJkNjg2YzQ1ZTgzMmU1OTNhOSJ9.g1vxlDudqChj_JL7ALkM--oRsI-tRM_snzDdKqJGRQw",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "complaint_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "image",
+									"type": "file",
+									"src": "postman-cloud:///1f089e59-7e13-4400-b6eb-93957d266f6c"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/attachments/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"attachments",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetAttachmentsByComplaintId",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2FkbWlucy9sb2dpbiIsImlhdCI6MTc2NTQ4MDMzNywiZXhwIjoxNzY1NDgzOTM3LCJuYmYiOjE3NjU0ODAzMzcsImp0aSI6ImZRckZHZVNFcFQ3MGpKYTEiLCJzdWIiOiIxIiwicHJ2IjoiZGY4ODNkYjk3YmQwNWVmOGZmODUwODJkNjg2YzQ1ZTgzMmU1OTNhOSJ9.g1vxlDudqChj_JL7ALkM--oRsI-tRM_snzDdKqJGRQw",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "complaint_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "image",
+									"type": "file",
+									"src": "postman-cloud:///1f089e59-7e13-4400-b6eb-93957d266f6c"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/attachments/byComplaint/1",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"attachments",
+								"byComplaint",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Citizens",
+			"item": [
+				{
+					"name": "GetAllCitizen",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2VtcGxveWVlcy9sb2dpbiIsImlhdCI6MTc2NTYyMjc4NywiZXhwIjoxNzY1NjI2Mzg3LCJuYmYiOjE3NjU2MjI3ODcsImp0aSI6InJ1ekhsS1I1MkdQWDVkeVkiLCJzdWIiOiI1IiwicHJ2IjoiMzI5NjNhNjA2YzJmMTcxZjFjMTQzMzFlNzY5NzY2Y2Q1OTEyZWQxNSJ9.MhA826VZqMN28pz0VtKeBRaeF0cFIMFD4SaTJjDWThQ",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"entity_id\" : 1,\r\n    \"complaint_type\" : 1,\r\n    \"location\" : \"location1\",\r\n    \"description\": \"this is a description\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/citizen",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"citizen"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetCitizenById",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2VtcGxveWVlcy9sb2dpbiIsImlhdCI6MTc2NTYyMjc4NywiZXhwIjoxNzY1NjI2Mzg3LCJuYmYiOjE3NjU2MjI3ODcsImp0aSI6InJ1ekhsS1I1MkdQWDVkeVkiLCJzdWIiOiI1IiwicHJ2IjoiMzI5NjNhNjA2YzJmMTcxZjFjMTQzMzFlNzY5NzY2Y2Q1OTEyZWQxNSJ9.MhA826VZqMN28pz0VtKeBRaeF0cFIMFD4SaTJjDWThQ",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"entity_id\" : 1,\r\n    \"complaint_type\" : 1,\r\n    \"location\" : \"location1\",\r\n    \"description\": \"this is a description\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/citizen/1",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"citizen",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "EditCitizen",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2VtcGxveWVlcy9sb2dpbiIsImlhdCI6MTc2NTYyMjc4NywiZXhwIjoxNzY1NjI2Mzg3LCJuYmYiOjE3NjU2MjI3ODcsImp0aSI6InJ1ekhsS1I1MkdQWDVkeVkiLCJzdWIiOiI1IiwicHJ2IjoiMzI5NjNhNjA2YzJmMTcxZjFjMTQzMzFlNzY5NzY2Y2Q1OTEyZWQxNSJ9.MhA826VZqMN28pz0VtKeBRaeF0cFIMFD4SaTJjDWThQ",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"full_name\" : \"Mohammad Sheikh Omar6\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/citizen/1",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"citizen",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "LockCitizen",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2VtcGxveWVlcy9sb2dpbiIsImlhdCI6MTc2NTYyMjc4NywiZXhwIjoxNzY1NjI2Mzg3LCJuYmYiOjE3NjU2MjI3ODcsImp0aSI6InJ1ekhsS1I1MkdQWDVkeVkiLCJzdWIiOiI1IiwicHJ2IjoiMzI5NjNhNjA2YzJmMTcxZjFjMTQzMzFlNzY5NzY2Y2Q1OTEyZWQxNSJ9.MhA826VZqMN28pz0VtKeBRaeF0cFIMFD4SaTJjDWThQ",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"hoursCnt\" : 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/citizen/1/lock",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"citizen",
+								"1",
+								"lock"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UnLockCitizen",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2FkbWlucy9sb2dpbiIsImlhdCI6MTc2NzkwNDE5MywiZXhwIjoxNzY3OTA3NzkzLCJuYmYiOjE3Njc5MDQxOTMsImp0aSI6IjFvbU4xRFV0R1ZraTdDdE4iLCJzdWIiOiIxIiwicHJ2IjoiZGY4ODNkYjk3YmQwNWVmOGZmODUwODJkNjg2YzQ1ZTgzMmU1OTNhOSJ9.A7QwKnpB6_W9lI_kuIeCZz4Zqfhi17Pmpktvs9_defA",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/citizen/1/unlock",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"citizen",
+								"1",
+								"unlock"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Others",
+			"item": [
+				{
+					"name": "GetAnalytics",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2FkbWlucy9sb2dpbiIsImlhdCI6MTc2Nzk5MjgwOCwiZXhwIjoxNzY3OTk2NDA4LCJuYmYiOjE3Njc5OTI4MDgsImp0aSI6Ik5qY3VGMG1YdFdlUnMwZkEiLCJzdWIiOiIxIiwicHJ2IjoiZGY4ODNkYjk3YmQwNWVmOGZmODUwODJkNjg2YzQ1ZTgzMmU1OTNhOSJ9.ZtY1H67GQYSkc7bfiZJ5tVEo29hF64DyoPV9HduzbCA",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"entity_id\" : 1,\r\n    \"complaint_type\" : 1,\r\n    \"location\" : \"location1\",\r\n    \"description\": \"this is a description\"\r\n}"
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/analytics",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"analytics"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "RunBachup",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/backup/run",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"backup",
+								"run"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

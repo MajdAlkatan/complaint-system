@@ -57,6 +57,14 @@ return [
             'prefix_indexes' => true,
             'strict' => true,
             'engine' => null,
+            // أضف هذا الجزء هنا
+            'dump' => [
+                'dump_binary_path' => 'C:/xampp/mysql/bin', // مسار مجلد bin في XAMPP
+                'use_single_transaction' => true,
+                'timeout' => 60 * 5, // 5 دقائق كحد أقصى
+                'add_extra_options' => '--protocol=tcp --host=127.0.0.1 --user=root',
+
+            ],
             'options' => extension_loaded('pdo_mysql') ? array_filter([
                 PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],

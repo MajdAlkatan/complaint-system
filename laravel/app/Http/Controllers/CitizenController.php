@@ -49,6 +49,17 @@ class CitizenController extends Controller
             Cache::forget("citizen_{$id}");
         $citizen = $this->citizenRepo->getById($id);
         $citizen->locked_until = Carbon::now()->addHours($request->hoursCnt)->toDateTimeString();
+        $this->citizenRepo->update($citizen->citizen_id , ['locked_until' => Carbon::now()->addHours($request->hoursCnt)->toDateTimeString()]);
+        return response()->json(['message' => 'the citizen account has locked until '. $citizen->locked_until]);
+    }
+
+    
+    public function unlock($id , Request $request){
+        if (Cache::has("citizen_{$id}"))
+            Cache::forget("citizen_{$id}");
+        $citizen = $this->citizenRepo->getById($id);
+        //$citizen->locked_until = null;
+        $this->citizenRepo->update($citizen->citizen_id , ['locked_until' => null]);
         return response()->json(['message' => 'the citizen account has locked until '. $citizen->locked_until]);
     }
 

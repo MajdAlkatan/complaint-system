@@ -37,7 +37,7 @@ class LogUserActivity
         }else{
 
         if(Auth::guard('admin')->check()){
-            activity('user-actions')
+            activity($request->route()->getName())
                 ->causedBy(Auth::guard('admin')->user())
                 ->withProperties([
                     'ip' => $request->ip(),
@@ -49,7 +49,7 @@ class LogUserActivity
         }
 
         else if(Auth::guard('employee')->check()){
-            activity('user-actions')
+            activity($request->route()->getName())
                 ->causedBy(Auth::guard('employee')->user())
                 ->withProperties([
                     'ip' => $request->ip(),
@@ -60,7 +60,7 @@ class LogUserActivity
                 ->log('Employee ' . Auth::guard('employee')->user()->email . ' performed an action');
         }
         else if(Auth::guard('citizen')->check()){
-            activity('user-actions')
+            activity($request->route()->getName())
                 ->causedBy(Auth::guard('citizen')->user())
                 ->withProperties([
                     'ip' => $request->ip(),

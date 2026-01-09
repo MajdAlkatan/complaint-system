@@ -298,7 +298,7 @@ public function getOverview()
                 'closed'      => $this->complaintRepo->getClosedCnt(),
                 'rejected'    => $this->complaintRepo->getRejectedCnt(),
             ],
-/*
+
             // 3. الأولويات (Complaints by Priority)
             'priority_stats' => [
                 'low'    => Complaint::where('priority', 'low')->count(),
@@ -306,7 +306,7 @@ public function getOverview()
                 'high'   => Complaint::where('priority', 'high')->count(),
                 'urgent' => Complaint::where('priority', 'urgent')->count(),
             ],
-
+/*
             // 4. التوجهات الشهرية (Monthly Trends - الرسم البياني)
             'monthly_trends' => $this->getMonthlyTrends(),
             */
