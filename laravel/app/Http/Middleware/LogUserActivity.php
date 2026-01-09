@@ -30,6 +30,7 @@ class LogUserActivity
                     'ip' => $request->ip(),
                     'method' => $request->method(),
                     'url' => $request->fullUrl(),
+                    'complaint-id' => $complaint->complaints_id,
                     'new-status' => $complaint->status
                 ])
                 ->log('ُEmployee ' . Auth::guard('employee')->user()->email . ' editied a complaint'. $complaint->complaints_id);

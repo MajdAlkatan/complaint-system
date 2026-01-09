@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 use App\Interfaces\ICitizenRepo;
 use Auth;
+use Cache;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Exceptions\JWTException;
@@ -19,19 +21,35 @@ class CitizenController extends Controller
     }
 
     public function index(){
-        $data = $this->citizenRepo->getAll();
+
+        $data = Cache::remember('Citizens', 3600, function () {
+            return $this->citizenRepo->getAll();
+        });
         return response()->json($data);
     }
 
     public function getById($id){
-        $data = $this->citizenRepo->getById($id);
+        $data = Cache::remember("citizen_{$id}", 3600, function () use ($id) {
+            return $this->citizenRepo->getById($id);
+        });
+        //$data = $this->citizenRepo->getById($id);
         return response()->json($data);
     }
 
 
     public function delete($id){
-        $data = $this->citizenRepo->delete($id);
+        if (Cache::has("citizen_{$id}"))
+            Cache::forget("citizen_{$id}");
+        $this->citizenRepo->delete($id);
         return response()->json(['message' => 'deleted']);
+    }
+
+    public function lock($id , Request $request){
+        if (Cache::has("citizen_{$id}"))
+            Cache::forget("citizen_{$id}");
+        $citizen = $this->citizenRepo->getById($id);
+        $citizen->locked_until = Carbon::now()->addHours($request->hoursCnt)->toDateTimeString();
+        return response()->json(['message' => 'the citizen account has locked until '. $citizen->locked_until]);
     }
 
     public function store(Request $request){
@@ -39,7 +57,10 @@ class CitizenController extends Controller
     }
 
     public function update($id , Request $request){
+        if (Cache::has("citizen_{$id}"))
+            Cache::forget("citizen_{$id}");
         $this->citizenRepo->update($id,$request->all());
+        $this->citizenRepo->update($id,['updated_at'=> now()]);
         return response()->json(['message' => 'The data has been updated succesfully ']);
     }
 

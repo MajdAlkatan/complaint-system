@@ -2,20 +2,30 @@
 ///app/Http/Controller/ComplaintController.php
 namespace App\Http\Controllers;
 
+use App\Interfaces\ICitizenRepo;
 use App\Interfaces\IComplaintRepo;
 use App\Interfaces\IComplaintTypeRepo;
+use App\Interfaces\IEmployeeRepo;
+use App\Models\Complaint;
+use Cache;
+use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Broadcast;
 use App\Events\MyEvent;
 use Pusher\Pusher;
+use Spatie\Activitylog\Models\Activity;
 
 class ComplaintController extends Controller
 {
     private Pusher $pusher;
     private IComplaintRepo $complaintRepo;
+    private ICitizenRepo $citizenRepo;
     private IComplaintTypeRepo $complaintTypeRepo;
-    public function __construct(IComplaintRepo $complaintRepo1, IComplaintTypeRepo $complaintTypeRepo1)
+    private IEmployeeRepo $employeeRepo;
+    public function __construct(IComplaintRepo $complaintRepo1, IComplaintTypeRepo $complaintTypeRepo1, ICitizenRepo $citizenRepo1, IEmployeeRepo $employeeRepo1)
     {
+        $this->employeeRepo = $employeeRepo1;
+        $this->citizenRepo = $citizenRepo1;
         $this->complaintRepo = $complaintRepo1;
         $this->complaintTypeRepo = $complaintTypeRepo1;
         $this->pusher = Broadcast::connection('pusher')->getPusher();
@@ -23,28 +33,35 @@ class ComplaintController extends Controller
 
     public function index()
     {
-        $data = $this->complaintRepo->getAll();
-        event(new MyEvent('hello world'));
+        //$data = $this->complaintRepo->getAll();
+        $data = Cache::remember("complaints", 3600, function () {
+            return $this->complaintRepo->getAll();
+        });
         return response()->json($data);
     }
 
 
     public function getMyComplaints()
     {
-        $data = $this->complaintRepo->getWhereEq('citizen_id', auth()->guard('citizen')->id());
+        $id = auth()->guard('citizen')->id();
+        $data = Cache::remember("complaintsFor_{$id}", 3600, function () {
+            return $this->complaintRepo->getWhereEq('citizen_id', auth()->guard('citizen')->id());
+        });
+        //$data = $this->complaintRepo->getWhereEq('citizen_id', auth()->guard('citizen')->id());
         return response()->json($data);
     }
 
 
     public function getAllTypes()
     {
-        $types = $this->complaintTypeRepo->getAll();
-        // Return the response as JSON
+        $types = Cache::remember('cacheTypes',3600, function () {
+            return $this->complaintTypeRepo->getAll();
+        });
+        //$types = $this->complaintTypeRepo->getAll();
         return response()->json($types);
     }
     public function getMyComplaintById($id)
     {
-
         $data = $this->complaintRepo->getById($id);
         if (!auth()->guard('citizen')->id() == $data->citizen_id)
             return response()->json(['message' => 'UnAuthorize'], 403);
@@ -54,13 +71,19 @@ class ComplaintController extends Controller
 
     public function getById($id)
     {
-        $data = $this->complaintRepo->getById($id);
+        $data = Cache::remember("Complaint_{$id}",3600, function () use ($id) {
+            return $this->complaintRepo->getById($id);
+        });
+        //$data = $this->complaintRepo->getById($id);
         return response()->json($data);
     }
 
     public function getByReferenceNumber($num)
-    {
-        $data = $this->complaintRepo->getFirstEq('reference_number', $num);
+    {   
+        $data = Cache::remember("Complaint_{$num}",0, function () use ($num) {
+            return $this->complaintRepo->getFirstEq('reference_number', $num);
+        });
+        //$data = $this->complaintRepo->getFirstEq('reference_number', $num);
         return response()->json($data);
     }
 
@@ -155,7 +178,16 @@ class ComplaintController extends Controller
         $this->pusher->trigger('User' . auth()->guard('employee')->id(), 'Update Complaint', ['message' => 'complaint have been updated by employee ']);
         return response()->json(['message' => 'The data has been updated succesfully ']);
     }
+    public function editPriority($id, Request $request)
+    {
+        $complaint = $this->complaintRepo->getById($id);
+        if ($complaint->locked == true && $complaint->locked_by_employee_id != auth()->guard('employee')->id())
+            return response()->json(['message' => 'this complaint is locked'], 400);
 
+        $this->complaintRepo->update($id, $request->only(['priority']));
+        $this->pusher->trigger('User' . $complaint->citizen_id, 'Edit Complaint Priority', ['message' => 'complaint Priority have been updated by employee ']);
+        return response()->json(['message' => 'The data has been updated succesfully ']);
+    }
 
     public function lock($id)
     {
@@ -188,5 +220,90 @@ class ComplaintController extends Controller
         return response()->json(['message' => 'The data has been inserted succesfully ']);
     }
 
+    public function deleteType($id)
+    {
+        $this->complaintTypeRepo->delete($id);
+        return response()->json(['message' => 'The Type has deleted succesfully ']);
+    }
+
+      /*** complaint acitvity */
+
+    public function getComplaintHistory($id)
+    {
+        // جلب كافة الأنشطة المتعلقة بهذه الشكوى من خلال الـ ID المخزن في الخصائص
+        $history = Activity::where('log_name', 'edit-complaint-status')
+            ->where('properties->complaint-id', $id) // تحديد النوع الذي سجلته في الميدل وير
+            ->with('causer') // لجلب بيانات الموظف الذي قام بالتعديل
+            ->get();
+
+        // تنسيق البيانات للعرض
+        $formattedHistory = $history->map(function ($activity) {
+            return [
+                'editor_name'  => $activity->causer ? $activity->causer->name : 'Unknown',
+                'editor_email' => $activity->causer ? $activity->causer->email : 'N/A',
+                'new_status'   => $activity->getExtraProperty('new-status'),
+                'ip_address'   => $activity->getExtraProperty('ip'),
+                'edit_time'    => $activity->created_at->format('Y-m-d H:i:s'),
+                'description'  => $activity->description,
+            ];
+        });
+
+        return response()->json($formattedHistory);
+    }
+
+
+
+
+    //Overview
+
+public function getOverview()
+    {
+        return response()->json([
+            'summary' => [
+                'total_complaints' => $this->complaintRepo->getCount(),
+                'active_citizens'  => $this->citizenRepo->getActiveCnt(),
+                'total_employees'  => $this->employeeRepo->getCount(),
+                'resolution_rate'  => 87, // عملية حسابية: (Resolved / Total) * 100
+            ],
+
+            // 2. حالة الشكاوى (Complaints by Status)
+            'status_stats' => [
+                'pending'     => $this->complaintRepo->getPendingCnt(),
+                'in_progress' => $this->complaintRepo->getInProgressCnt(),
+                'resolved'    => $this->complaintRepo->getResolvedCnt(),
+                'closed'      => $this->complaintRepo->getClosedCnt(),
+                'rejected'    => $this->complaintRepo->getRejectedCnt(),
+            ],
+/*
+            // 3. الأولويات (Complaints by Priority)
+            'priority_stats' => [
+                'low'    => Complaint::where('priority', 'low')->count(),
+                'medium' => Complaint::where('priority', 'medium')->count(),
+                'high'   => Complaint::where('priority', 'high')->count(),
+                'urgent' => Complaint::where('priority', 'urgent')->count(),
+            ],
+
+            // 4. التوجهات الشهرية (Monthly Trends - الرسم البياني)
+            'monthly_trends' => $this->getMonthlyTrends(),
+            */
+        ]);
+    }
+
+    private function getMonthlyTrends()
+    {
+        // جلب عدد الشكاوى لكل شهر خلال السنة الحالية
+        return Complaint::select(
+            DB::raw('count(id) as count'),
+            DB::raw("DATE_FORMAT(created_at, '%b') as month")
+        )
+            ->whereYear('created_at', date('Year'))
+            ->groupBy('month')
+            ->orderBy('created_at')
+            ->get();
+    }
     
+
+
+
+
 }
