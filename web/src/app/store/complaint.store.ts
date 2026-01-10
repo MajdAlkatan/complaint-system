@@ -109,6 +109,7 @@ export const useComplaintStore = create<ComplaintStore>()(
       lockComplaint: async (id: number): Promise<boolean> => {
         try {
           const response = await axiosInstance.put(`/complaints/lock/${id}`);
+          console.log(response);
 
           if (response.status === 200) {
             toast.success("Complaint locked successfully!");
@@ -138,6 +139,7 @@ export const useComplaintStore = create<ComplaintStore>()(
       unlockComplaint: async (id: number): Promise<boolean> => {
         try {
           const response = await axiosInstance.put(`/complaints/unLock/${id}`);
+          console.log(response);
 
           if (response.status === 200) {
             toast.success("Complaint unlocked successfully!");
@@ -175,6 +177,7 @@ export const useComplaintStore = create<ComplaintStore>()(
               message,
             }
           );
+          console.log(response);
 
           if (response.status === 200) {
             toast.success("Notes request sent successfully!");
@@ -206,7 +209,9 @@ export const useComplaintStore = create<ComplaintStore>()(
         data: UpdateComplaintData
       ): Promise<boolean> => {
         try {
+          console.log(data);
           const response = await axiosInstance.put(`/complaints/${id}`, data);
+          console.log(response);
 
           if (response.status === 200) {
             toast.success("Complaint updated successfully!");
