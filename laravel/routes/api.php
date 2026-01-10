@@ -23,6 +23,15 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');*/
 
+
+Route::get('/v1/who-am-i', function () {
+    return response()->json([
+        'instance_port' => $_SERVER['SERVER_PORT'],
+        'time' => now()->toDateTimeString(),
+        'message' => 'هذا الطلب تمت معالجته بواسطة النسخة التي تعمل على منفذ: ' . $_SERVER['SERVER_PORT']
+    ]);
+});
+
 Route::post('admins/register', [AdminController::class, 'register'])
     ->middleware('LogUserActivity')->name('register admin');
 
@@ -197,6 +206,8 @@ Route::get('governmentEntites', [GovernmentEntityController::class, 'index'])
     ;//->middleware('citizen');
 
 
-Route::post('/backup/run', [BackupController::class, 'run']);
 
+Route::get('/backup/details', [BackupController::class, 'index']);
+Route::post('/backup/run', [BackupController::class, 'run']);
+Route::get('/backup/download/{fileName}', [BackupController::class, 'download']);
 Route::post('/backup/restore', [BackupController::class, 'restore']);
